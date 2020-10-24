@@ -21,18 +21,12 @@ M = size(tasks,2);
 task_pos = zeros(M,2);
 task_v   = zeros(M,2);
 task_tf = zeros(M,1);
-task_tloiter = zeros(M,1);
-task_radius = zeros(M,1);
-task_type = zeros(M,1);
 task_value = zeros(M,1);
 
 for j = 1:M
     task_pos(j,:) = [tasks(j).x tasks(j).y];
     task_v(j,:)   = tasks(j).Speed;
     task_tf(j) = tasks(j).tf;
-    task_tloiter(j) = tasks(j).tloiter;
-    task_radius(j) = tasks(j).radius;
-    task_type(j) = tasks(j).type;
     task_value(j) = tasks(j).value;
 end
 
@@ -53,7 +47,7 @@ for j = 1:M
         
         winners_matrix(agent_idx, :) = zeros(1,CBBA_Params.M);
         winners_matrix(agent_idx, j) = 1;
-        U_new = CalcUtility([agent.x, agent.y], agent.v_a, task_pos, task_v, task_type, task_radius, task_tloiter, task_tf, task_value, b_new, agent_idx, CBBA_Params.prob_a_t, CBBA_Params.N, winners_matrix, CBBA_Params.lambda);
+        U_new = CalcUtility([agent.x, agent.y], agent.v_a, task_pos, task_v, task_tf, task_value, b_new, agent_idx, CBBA_Params.prob_a_t, CBBA_Params.N, winners_matrix, CBBA_Params.lambda);
         
         if U_new > U
             U = U_new;

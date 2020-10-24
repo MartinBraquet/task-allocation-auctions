@@ -1,4 +1,4 @@
-function [U] = CalcTaskUtility(agent_pos, agent_va, task_pos, task_tf, task_value, j, prob_a_t, winners, lambda)
+function [U] = CalcTaskUtility(agent_pos, agent_va, task_pos, task_vt, task_tf, task_value, j, prob_a_t, winners, lambda)
     prod_all = prod(1 - winners(:,j).*prob_a_t(:,j));
     
     rt = task_value * (1 - prod_all);
@@ -10,7 +10,7 @@ function [U] = CalcTaskUtility(agent_pos, agent_va, task_pos, task_tf, task_valu
         U = 0;
     else
         for i = assigned_agents
-            [~, ~, rho] = ComputeCommandParams(agent_pos(i,:), agent_va(i,:), task_pos, task_tf);
+            [~, ~, ~, ~, rho] = ComputeCommandParamsWithVelocity(agent_pos(i,:)', agent_va(i,:)', task_pos', task_vt', task_tf);
             Rt = Rt + rho;
         end
         U = rt - lambda * Rt;

@@ -92,6 +92,7 @@ for simu_time = simu_time_vector
         PlotAgentRange(pos_a, comm_distance, colors, 'Comm Range')
 
         Agents.Pos = pos_a;
+        Agents.v_a = v_a;
 
         Tasks.Pos = pos_t;
         Tasks.N = nt;

@@ -40,7 +40,7 @@ while(doneFlag == 0)
     %---------------------------------------%
     
     % Run CBBA on each agent 
-    for n=1:CBBA_Params.N
+    for n = 1:CBBA_Params.N
         
         % Perform consensus on winning agents and bid values 
         %[CBBA_Data, t] = CBBA_Communicate(CBBA_Params, CBBA_Data, Graph, t, T, n);
@@ -55,8 +55,12 @@ while(doneFlag == 0)
 %         end
     end
     
-    if sum(CBBA_Data(1).fixedAgents) == CBBA_Params.N
-        doneFlag = 1;
+    doneFlag = 1;
+    for n = 1:CBBA_Params.N
+        if CBBA_Data(n).fixedAgents(n) == 0
+            doneFlag = 0;
+            break;
+        end
     end
 
     %---------------------------------------%

@@ -1,4 +1,4 @@
-function [U] = CalcUtility(agent_pos, agent_va, task_pos, task_tf, task_value, b, i, prob_a_t, N, winners, lambda)
+function [U] = CalcUtility(agent_pos, agent_va, task_pos, task_v, task_type, task_radius, task_tloiter, task_tf, task_value, b, i, prob_a_t, N, winners, lambda)
     U = 0;
     old_tf = 0;
        

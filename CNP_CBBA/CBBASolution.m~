@@ -60,9 +60,7 @@ function [S_CBBA, p, S_CBBA_ALL] = CBBASolution(Agents, G, TasksCells)
     task_default.y        = 0;          % task position (meters)
     task_default.z        = 0;          % task position (meters)
     task_default.Speed    = 0;          %
-    task_default.type     = 0;          %
-    task_default.radius   = 0;          %
-    task_default.tloiter  = 0;          %
+    task_default.type    = 0;          %
 
     % FOR USER TO DO:  Set task fields for specialized tasks
 
@@ -117,7 +115,6 @@ function [S_CBBA, p, S_CBBA_ALL] = CBBASolution(Agents, G, TasksCells)
         tasks(m).Speed    = TasksCells.Speed(m);
         tasks(m).type     = TasksCells.task_type(m);
         tasks(m).radius   = TasksCells.task_radius(m);
-        tasks(m).tloiter  = TasksCells.task_tloiter(m);
     end
 
     %---------------------------------------------------------------------%

@@ -8,11 +8,13 @@ function [CBBA_Data t] = CBBA_Communicate_Single_Assignment(CBBA_Params, CBBA_Da
 % Copy data
 for n = 1:CBBA_Params.N
     old_z(n,:) = CBBA_Data(n).winners;
-    old_y(n,:) = CBBA_Data(n).winnerBids;    
+    old_y(n,:) = CBBA_Data(n).winnerBids;
+    old_f(n,:) = CBBA_Data(n).fixedAgents;
 end
 
 z = old_z;
 y = old_y;
+f = old_f;
 t = old_t;
 
 epsilon = 10e-6;
@@ -31,6 +33,7 @@ for i=1:CBBA_Params.N
                 
                 z(i,k) = old_z(k,k);
                 y(i,k) = old_y(k,k);
+                f(i,k) = old_f(k,k);
                 
            % end
                 
@@ -51,6 +54,7 @@ end
 for n = 1:CBBA_Params.N
     CBBA_Data(n).winners    = z(n,:);
     CBBA_Data(n).winnerBids = y(n,:);
+    CBBA_Data(n).fixedAgents = f(n,:);
     t(n,n) = T;
 end
 

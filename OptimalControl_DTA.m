@@ -13,18 +13,23 @@ rng(8);
 CommLimit = 1;
 use_CBBA = 1;
 use_OPT = 0;
+uniform_agents = 0;
+uniform_tasks = 0;
 
-na = 10;
-nt = 10;
+na = 15;
+nt = 15;
 Lt = 1;
 
+nt_loiter = floor(nt/2);
+task_type = zeros(nt,1);
+task_type(1:nt_loiter) = 1;
 lambda = 1;
 
 map_width = 1;
-comm_distance = 2 * map_width;
+comm_distance = 0.1 * map_width;
 
 simu_time = 5;
-n_rounds = 40;
+n_rounds = 1000;
 time_step = simu_time / n_rounds;
 time_start = 0;
 
@@ -33,6 +38,7 @@ pos_t = (0.1 + 0.8 * rand(na,2)) * map_width;
 %tf_t = rand(nt,1) * simu_time;
 %tf_t = [5*ones(1,3) 10*ones(1,1)];
 tf_t =  simu_time / 1.05 * (1 + 0.05 * rand(nt,1));
+tloiter_t =  simu_time * (0.1 + 0.05 * rand(nt,1));
 %tf_t = 10*ones(1,nt);
 
 [tf_t, idx] = sort(tf_t);
@@ -41,18 +47,49 @@ pos_t = pos_t(idx,:);
 %velocity = 1:na;
 %velocity = 1 * ones(1,nt);
 max_speed = 0.1;
-v_a = (2 * rand(na,2) - 1) * max_speed;
+if uniform_agents
+    v_a = zeros(na,2);
+else
+    v_a = (2 * rand(na,2) - 1) * max_speed;
+end
+
+max_speed_task = 0.1;
+if uniform_tasks
+    v_t = zeros(nt,2);
+else
+    v_t = (2 * rand(nt,2) - 1) * max_speed_task;
+end
+
+R = 0.1 * map_width;
+if uniform_tasks
+    radius_t = R * ones(nt,1);
+else
+    radius_t = (rand(nt,1) - 0.5) * R;
+end
+
+% 
+% pos_a = [0.1 0.5];
+% v_a = [0.1 0];
+% pos_t = [0.8 0.5];
+
 
 % Reward after task completion
-r_bar = rand(nt,1);
-%r_bar = ones(nt,1);
-
+if uniform_agents
+    r_bar = ones(nt,1);
+else
+    r_bar = rand(nt,1);
+end
+    
 % Probability that agent i successfully completes task j
-prob_a_t = rand(na,nt);
-%prob_a_t = 1*ones(na,nt);
+if uniform_agents
+    prob_a_t = 0.7 * ones(na,nt);
+else
+    prob_a_t = rand(na,nt);
+end
 
 Tasks.r_bar = r_bar;
 Tasks.prob_a_t = prob_a_t;
+Tasks.tast_type = task_type;
 
 Agents.N = na;
 Agents.Lt = Lt * ones(1,na);
@@ -68,10 +105,12 @@ G = ~eye(Agents.N);
 figure; hold on;
 colors = lines(na);
 
-U_next_tot = zeros(n_rounds,1);
+U_next_tot = zeros(n_rounds-1,1);
+U_tot = zeros(n_rounds-1,1);
+U_completed_tot = 0;
 n_rounds_init = n_rounds;
 
-for i_round = 1:n_rounds_init
+for i_round = 1:n_rounds_init-1
     
     clf; hold on;
     xlim([0 map_width]);
@@ -83,22 +122,33 @@ for i_round = 1:n_rounds_init
         plot(pos_a(i,1), pos_a(i,2), '*', 'Color', colors(i,:), 'MarkerSize', 10, 'DisplayName', 'Agents');
     end
     plot(pos_t(:,1), pos_t(:,2),'rs', 'MarkerSize', 10, 'DisplayName', 'Targets', 'MarkerFaceColor',[1 .6 .6]);
-    PlotAgentRange(pos_a, comm_distance, colors, 'Comm Range')
+    if CommLimit
+        PlotAgentRange(pos_a, comm_distance, colors, 'Comm Range');
+    end
     
     Agents.Pos = pos_a;
+    Agents.v_a = v_a;
     
     Tasks.Pos = pos_t;
+    Tasks.Speed = v_t;
     Tasks.N = nt;
     Tasks.tf = tf_t;
     Tasks.lambda = lambda;
+    Tasks.task_type = task_type;
+    Tasks.tloiter = tloiter_t;
+    Tasks.radius = radius_t;
     
-    for i = 1:na
-        for j = 1:nt
-            [~, ~, costs(i,j)] = ComputeCommandParams(pos_a(i,:), v_a(i,:), pos_t(j,:), tf_t(j));
-            rewards(i,j) = r_bar(j) * prob_a_t(i,j);
-            winners = zeros(na,nt);
-            winners(i,j) = 1;
-            utility(i,j) = CalcTaskUtility(pos_a, v_a, pos_t(j,:), tf_t(j), r_bar(j), j, prob_a_t, winners, lambda);
+    for j = 1:nt
+        if tf_t(j) > 0
+            for i = 1:na
+                [~, ~, ~, ~, costs(i,j)] = ComputeCommandParamsWithVelocity(pos_a(i,:)', v_a(i,:)', pos_t(j,:)', v_t(j,:)', tf_t(j));
+                %mycost(i_round) = costs(i,j)
+                rewards(i,j) = r_bar(j) * prob_a_t(i,j);
+                winners = zeros(na,nt);
+                winners(i,j) = 1;
+                utility(i,j) = CalcTaskUtility(pos_a, v_a, pos_t(j,:), v_t(j,:), tf_t(j), r_bar(j), j, prob_a_t, winners, lambda);
+                %myutility(i_round) = utility(i,j)
+            end
         end
     end
     
@@ -115,7 +165,6 @@ for i_round = 1:n_rounds_init
         % CBBA solution
         tic; [S_CBBA, p_CBBA, S_CBBA_ALL] = CBBASolution(Agents, G, Tasks)
         toc;
-        U_next_tot(i_round) = S_CBBA;
     else
         % Test of fixed solution
         p_CBBA = {[1 4], [2 4], [3 4]}; S_CBBA = 1;
@@ -127,9 +176,20 @@ for i_round = 1:n_rounds_init
         [S_CBBA S_OPT]
     end
     
+    U_next_tot(i_round) = S_CBBA;
+    U_tot(i_round) = U_next_tot(i_round) + U_completed_tot;
+    
     % Find the optimal control solution for the given allocation p_CBBA
-    X = OptimalControlSolution(pos_a, v_a, pos_t, p_CBBA, tf_t, time_step, n_rounds, na);
+    [X, completed_tasks] = OptimalControlSolution(pos_a, v_a, pos_t, v_t, p_CBBA, tf_t, time_step, n_rounds, na);
     PlotAlloc(X, n_rounds, na, colors, 'CBBA solution');
+    
+    for j = completed_tasks
+            pos_t(j,:) = [1 1] * 1e16;
+            U_completed_tot = U_completed_tot + S_CBBA_ALL(j);
+    end
+    
+    completed_tasks = [];
+    
     
     legend(legendUnq(gca));
     drawnow;
