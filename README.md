@@ -5,5 +5,5 @@ Master's research at The University of Texas at Austin in the research group of 
 
 A paper resulting from these simulations is expected to be published by the end of 2020.
 
-* For the dynamic task allocation, run `OptimalControl_DTA.m'.
-* For the sensitivity analysis of the parameters, run `optimalControlParametersAnalysis.m'.
+* For the dynamic task allocation, run `OptimalControl_DTA.m`.
+* For the sensitivity analysis of the parameters, run `optimalControlParametersAnalysis.m`.
