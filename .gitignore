@@ -1,2 +1,7 @@
 *.m~
 *.png
+*.avi*
+*.mp4
+*.fig
+*.tex
+mat/*
