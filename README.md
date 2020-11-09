@@ -7,3 +7,5 @@ A paper resulting from these simulations is expected to be published by the end 
 
 * For the dynamic task allocation, run `OptimalControl_DTA.m`.
 * For the sensitivity analysis of the parameters, run `optimalControlParametersAnalysis.m`.
+
+Note: this repository is actively in progress and needs to be cleaned in the near future.
