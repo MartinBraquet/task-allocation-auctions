@@ -10,7 +10,7 @@ R = 0.2;
 va = [0; 0.6];
 nturns_loitering = 1;
 
-norm_vt = 2*pi * R / tT;
+norm_vt = nturns_loitering * 2*pi * R / tT;
 
 time_step = tf / 1000;
 t_circle = 0:time_step:(tf-tT);

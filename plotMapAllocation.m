@@ -1,4 +1,4 @@
-function PlotAlloc(X, n_rounds, na, color, name)
+function plotMapAllocation(X, n_rounds, na, color, name)
 
     for i = 1:na      
         xx = reshape(X(:,i,:),[4,n_rounds+1]);

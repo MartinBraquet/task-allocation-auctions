@@ -2,7 +2,7 @@
 % Main CBBA Function
 %---------------------------------------------------------------------%
 
-function [CBBA_Data Total_Score, All_scores] = CBBA_Main(agents, tasks, Graph, prob_a_t, lambda)
+function [CBBA_Data Total_Score, All_scores, agents] = CBBA_Main(agents, tasks, Graph, prob_a_t, lambda)
 
 % Initialize CBBA parameters
 CBBA_Params = CBBA_Init(length(agents),length(tasks), prob_a_t, lambda);
@@ -21,6 +21,19 @@ for n=1:CBBA_Params.N
     CBBA_Data(n).Lt               = agents(n).Lt;
 end
 
+% Fix the tasks if the completion is close
+for i=1:CBBA_Params.N
+    task_idx = agents(i).previous_task;
+    if task_idx ~= 0 && (tasks(task_idx).tf - tasks(task_idx).tloiter) / tasks(task_idx).tloiter < 1
+        CBBA_Data(i).fixedAgents(i) = 1;
+        CBBA_Data(i).path = agents(i).previous_task;
+        CBBA_Data(i).winners(i) = task_idx;
+        CBBA_Data(i).winnerBids(i) = agents(i).previous_winnerBids;
+    end
+end
+
+
+
 % Initialize working variables
 T         = 0;                                      % Current iteration
 t         = zeros(CBBA_Params.N, CBBA_Params.N);    % Matrix of time of updates from the current winners
@@ -38,7 +51,6 @@ while(doneFlag == 0)
     %---------------------------------------%
     % 2. Run CBBA bundle building/updating
     %---------------------------------------%
-    
     % Run CBBA on each agent 
     for n = 1:CBBA_Params.N
         
@@ -46,7 +58,7 @@ while(doneFlag == 0)
         %[CBBA_Data, t] = CBBA_Communicate(CBBA_Params, CBBA_Data, Graph, t, T, n);
 
         if CBBA_Data(n).fixedAgents(n) == 0
-            [CBBA_Data(n), newBid] = CBBA_Bundle(CBBA_Params, CBBA_Data(n), agents(n), tasks, n);
+            [CBBA_Data(n), newBid, agents(n)] = CBBA_Bundle(CBBA_Params, CBBA_Data(n), agents(n), tasks, n);
         end
 
         % Update last time things changed 
@@ -98,6 +110,13 @@ end
 %         end
 %     end
 % end
+
+% 
+
+if CBBA_Data(1).path ~= 3
+    io = 1;
+end
+
 
 % Compute the total score of the CBBA assignment
 Total_Score = 0;

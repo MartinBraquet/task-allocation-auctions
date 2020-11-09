@@ -1,4 +1,4 @@
-function [u, r, v, rho] = ComputeCommandParamsWithVelocity(pos_a_curr, v_a_curr, pos_t_curr, v_t, tf, t)
+function [u, r, v, t, rho] = ComputeCommandParamsWithVelocity(pos_a_curr, v_a_curr, pos_t_curr, v_t, tf, t, kdrag)
 
     t0 = 0;
     t1 = tf;
@@ -7,14 +7,18 @@ function [u, r, v, rho] = ComputeCommandParamsWithVelocity(pos_a_curr, v_a_curr,
     v0 = v_a_curr;
     v1 = v_t;
     
+    %if norm(pos_a_curr - pos_t_curr) / norm(pos_a_curr) < 1e-2
+    
     if isempty(t)
         t = [t0 t1];
     end
 
     dydt = @(t,y) [y(3:4); 4/(t1-t) * (v1 - y(3:4)) + 6/(t1-t)^2 * (r1 - (y(1:2) + v1*(t1 - t)))];
+   
 
-    %options = odeset('RelTol',1e-5);
-    [t,y] = ode23s(dydt, t, [r0; v0]); %, options);
+    %options = odeset('RelTol',1e-4);
+    %[t,y] = ode23s(dydt, t, [r0; v0], options);
+    [t,y] = ode45(dydt, t, [r0; v0]); %, options);
 
     r = y(:,1:2);
     v = y(:,3:4);

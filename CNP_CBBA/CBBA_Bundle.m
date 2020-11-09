@@ -2,13 +2,13 @@
 % Main CBBA bundle building/updating (runs on each individual agent)
 %---------------------------------------------------------------------%
 
-function [CBBA_Data, newBid] = CBBA_Bundle(CBBA_Params, CBBA_Data, agent, tasks, agent_idx)
+function [CBBA_Data, newBid, agent] = CBBA_Bundle(CBBA_Params, CBBA_Data, agent, tasks, agent_idx)
 
 % Update bundles after messaging to drop tasks that are outbid
 CBBA_Data = CBBA_BundleRemoveSingleAssignment(CBBA_Params, CBBA_Data, agent_idx);
 
 % Bid on new tasks and add them to the bundle
-CBBA_Data = CBBA_BundleAdd(CBBA_Params, CBBA_Data, agent, tasks, agent_idx);
+[CBBA_Data agent] = CBBA_BundleAdd(CBBA_Params, CBBA_Data, agent, tasks, agent_idx);
 
 newBid = 0;
 

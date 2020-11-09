@@ -2,7 +2,7 @@
 % Create bundles for each agent
 %---------------------------------------------------------------------%
 
-function [CBBA_Data] = CBBA_BundleAdd(CBBA_Params, CBBA_Data, agent, tasks, agent_idx)
+function [CBBA_Data, agent] = CBBA_BundleAdd(CBBA_Params, CBBA_Data, agent, tasks, agent_idx)
 
 if CBBA_Data.fixedAgents(agent_idx) == 1
     return;
@@ -48,16 +48,18 @@ end
 
 
 for j = 1:M
-    if task_tf(j) > 0
+    if task_tf(j) > task_tloiter(j)
         b_new = j;
         
         winners_matrix(agent_idx, :) = zeros(1,CBBA_Params.M);
         winners_matrix(agent_idx, j) = 1;
-        U_new = CalcUtility([agent.x, agent.y], agent.v_a, task_pos, task_v, task_type, task_radius, task_tloiter, task_tf, task_value, b_new, agent_idx, CBBA_Params.prob_a_t, CBBA_Params.N, winners_matrix, CBBA_Params.lambda);
+        [rin_t_new, vin_t_new, U_new] = CalcUtility([agent.x, agent.y], agent.v_a, task_pos, task_v, task_type, task_radius, task_tloiter, task_tf, task_value, b_new, agent_idx, CBBA_Params.prob_a_t, CBBA_Params.N, winners_matrix, CBBA_Params.lambda, agent.kdrag);
         
         if U_new > U
             U = U_new;
             b = b_new;
+            rin_t = rin_t_new;
+            vin_t = vin_t_new;
         end
     end
             
@@ -118,6 +120,7 @@ end
 %     end
 % end
 
+
 CBBA_Data.path           = b; %CBBA_InsertInList(CBBA_Data.path, bestTask, bestIdxs(1,bestTask));
 %CBBA_Data.times         = CBBA_InsertInList(CBBA_Data.times, taskTimes(1,bestTask), bestIdxs(1,bestTask));
 CBBA_Data.winnerBids(agent_idx) = U; %CBBA_InsertInList(CBBA_Data.scores, CBBA_Data.bids(bestTask), bestIdxs(1,bestTask));
@@ -129,5 +132,10 @@ if isempty(b)
 end
 
 CBBA_Data.winners(agent_idx) = b;
+
+if U > 0
+    agent.rin_task = rin_t;
+    agent.vin_task = vin_t;
+end
 
 return

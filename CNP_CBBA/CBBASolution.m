@@ -4,7 +4,7 @@
 % Author: Martin Braquet
 % Date: August 31, 2020
 
-function [S_CBBA, p, S_CBBA_ALL] = CBBASolution(Agents, G, TasksCells)
+function [S_CBBA, p, S_CBBA_ALL, rt, Agents] = CBBASolution(Agents, G, TasksCells)
 
     na = Agents.N;
     pos_a = Agents.Pos;
@@ -41,7 +41,12 @@ function [S_CBBA, p, S_CBBA_ALL] = CBBASolution(Agents, G, TasksCells)
     agent_default.nom_vel = 0;          % agent cruise velocity (m/s)
     agent_default.fuel    = 0;          % agent fuel penalty (per meter)
     agent_default.Lt      = 0;          % agent max number of tasks
-    agent_default.v_a      = [0 0];          % 
+    agent_default.v_a      = [0 0];          %
+    agent_default.rin_task = [];
+    agent_default.vin_task = [];
+    agent_default.previous_task = [];
+    agent_default.previous_winnerBids = [];
+    agent_default.kdrag = 0;
     
     % FOR USER TO DO:  Set agent fields for specialized agents, for example:
     % agent_default.util = 0;
@@ -100,6 +105,11 @@ function [S_CBBA, p, S_CBBA_ALL] = CBBASolution(Agents, G, TasksCells)
         agents(n).z       = 0;
         agents(n).v_a     = Agents.v_a(n,:);
         agents(n).Lt      = Agents.Lt(n);
+        agents(n).rin_task = [];
+        agents(n).vin_task = [];
+        agents(n).previous_task = Agents.previous_task(n);
+        agents(n).previous_winnerBids = Agents.previous_winnerBids(n);
+        agents(n).kdrag = Agents.kdrag;
         %agents(n).clr  = WORLD.CLR(n,:);
     end
     
@@ -116,15 +126,15 @@ function [S_CBBA, p, S_CBBA_ALL] = CBBASolution(Agents, G, TasksCells)
         tasks(m).value    = TasksCells.r_bar(m);
         tasks(m).Speed    = TasksCells.Speed(m);
         tasks(m).type     = TasksCells.task_type(m);
-        tasks(m).radius   = TasksCells.task_radius(m);
-        tasks(m).tloiter  = TasksCells.task_tloiter(m);
+        tasks(m).radius   = TasksCells.radius(m);
+        tasks(m).tloiter  = TasksCells.tloiter(m);
     end
 
     %---------------------------------------------------------------------%
     % Run CBBA
     %---------------------------------------------------------------------%
     %tic
-    [CBBA_Assignments, S_CBBA_agents, S_CBBA_ALL_agents] = CBBA_Main(agents, tasks, G, TasksCells.prob_a_t, TasksCells.lambda);
+    [CBBA_Assignments, S_CBBA_agents, S_CBBA_ALL_agents, agents] = CBBA_Main(agents, tasks, G, TasksCells.prob_a_t, TasksCells.lambda);
     %toc
     %PlotAssignments(WORLD, CBBA_Assignments, agents, tasks, 1);
     %PlotAssignments2D(WORLD, CBBA_Assignments, agents, tasks, 3);
@@ -133,19 +143,51 @@ function [S_CBBA, p, S_CBBA_ALL] = CBBASolution(Agents, G, TasksCells)
     
     for i = 1:na
         p{i} = CBBA_Assignments(i).path;
+        
         ind = find(p{i} == -1);
         if ~isempty(ind)
             p{i} = p{i}(1:(ind(1)-1));
         end
     end
     
-    winners = CBBA_Assignments(1).winners;
+    
+    winners = zeros(na,1);
+    for i = 1:na
+        if ~isempty(p{i})
+            winners(i) = p{i};
+        end
+    end
     winners_matrix = WinnerVectorToMatrix(na, nt, winners);
 
     S_CBBA_ALL = zeros(1,nt);
+    rt         = zeros(1,nt);
     for j = 1:nt
-        S_CBBA_ALL(j) = CalcTaskUtility(Agents.Pos, Agents.v_a, TasksCells.Pos(j,:), TasksCells.Speed(j,:), TasksCells.tf(j), TasksCells.r_bar(j), j, TasksCells.prob_a_t, winners_matrix, TasksCells.lambda);
+        S_CBBA_ALL(j) = CalcTaskUtility(Agents.Pos, Agents.v_a, TasksCells.Pos(j,:), TasksCells.Speed(j,:), TasksCells.tf(j), TasksCells.r_bar(j), j, TasksCells.prob_a_t, winners_matrix, TasksCells.lambda, Agents.kdrag);
+        rt(j) = TasksCells.r_bar(j) * (1 - prod(1 - winners_matrix(:,j).*TasksCells.prob_a_t(:,j)));
     end
     S_CBBA = sum(S_CBBA_ALL);
+    
+    % Fix the tasks if the completion is close
+    for i=1:na
+        task_idx = p{i};
+        if isempty(task_idx)
+            Agents.previous_task(i) = 0;
+            Agents.previous_winnerBids(i) = 0;
+        else
+            if tasks(task_idx).tloiter > 0 && (tasks(task_idx).tf - tasks(task_idx).tloiter) / tasks(task_idx).tloiter < 1
+                p{i} = Agents.previous_task(i);
+            else
+                Agents.previous_task(i) = task_idx;
+                Agents.previous_winnerBids(i) = S_CBBA_ALL_agents(i);
+            end
+        end
+    end
+    
+    for i = 1:na
+        if ~isempty(agents(i).rin_task')
+            Agents.rin_task(i,:) = agents(i).rin_task';
+            Agents.vin_task(i,:) = agents(i).vin_task';
+        end
+    end
 
 end
