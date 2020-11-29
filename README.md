@@ -10,4 +10,6 @@ A paper resulting from these simulations is expected to be published by the end 
 
 Note: this repository is actively in progress and needs to be cleaned in the near future.
 
+2D map of the dynamic task allocation (10 agents and 10 tasks) with associated reward, cost and utility:
+
 ![Alt Text](https://martinbraquet.com/wp-content/uploads/Dynamic-Task-Agent-Allocation.gif)
