@@ -11,17 +11,17 @@ close all; clear all;
 rng('default');
 rng(6);
 
-simuNumber = 7;
+simuNumber = 3;
 simuName = 'Variation of parameters';
 
 %% Setting of the manual parameters
 
 AllParamsToAnalyze = {'RangeLimitation', 'RewardSuccessProbability', 'NumberAgentsTasks', 'TimeRatioLoiteringTasks'};
-paramToAnalyze = AllParamsToAnalyze{4};
+paramToAnalyze = AllParamsToAnalyze{3};
 
 isUniformAgents = 0;
 isUniformTasks = 1;
-isPlotAlloc = 1;
+isPlotAlloc = 0;
 isPlotRange = 0;
 isCommLimit = 0;
 
@@ -201,10 +201,10 @@ end
             end
         end
         
-        mkdir(sprintf('mat/%s/simu_%d', simuName, simuNumber));
-        save(sprintf('mat/%s/simu_%d/ratioRangeMapWidth-%d.mat', simuName, simuNumber), 'ratioRangeMapWidth');
-        save(sprintf('mat/%s/simu_%d/totalUtilityAllocation-%d.mat', simuName, simuNumber), 'totalUtilityAllocation');
-        save(sprintf('mat/%s/simu_%d/SimuParamsCell.mat', simuName, simuNumber), 'SimuParamsCell');
+        mkdir(sprintf('mat/%s/%s/simu_%d', simuName, paramToAnalyze, simuNumber));
+        save(sprintf('mat/%s/%s/simu_%d/ratioRangeMapWidth-%d.mat', simuName, paramToAnalyze, simuNumber), 'ratioRangeMapWidth');
+        save(sprintf('mat/%s/%s/simu_%d/totalUtilityAllocation-%d.mat', simuName, paramToAnalyze, simuNumber), 'totalUtilityAllocation');
+        save(sprintf('mat/%s/%s/simu_%d/SimuParamsCell.mat', simuName, paramToAnalyze, simuNumber), 'SimuParamsCell');
         
         figure;
         plot(ratioRangeMapWidth, totalUtilityAllocation);
@@ -249,11 +249,11 @@ end
             end
         end
         
-        mkdir(sprintf('mat/%s/simu_%d', simuName, simuNumber));
-        save(sprintf('mat/%s/simu_%d/nomReward-%d.mat', simuName, simuNumber), 'nomReward');
-        save(sprintf('mat/%s/simu_%d/nomProbAT-%d.mat', simuName, simuNumber), 'nomProbAT');
-        save(sprintf('mat/%s/simu_%d/totalUtilityAllocation-%d.mat', simuName, simuNumber), 'totalUtilityAllocation');
-        save(sprintf('mat/%s/simu_%d/SimuParamsCell.mat', simuName, simuNumber), 'SimuParamsCell');
+        mkdir(sprintf('mat/%s/%s/simu_%d', simuName, paramToAnalyze, simuNumber));
+        save(sprintf('mat/%s/%s/simu_%d/nomReward-%d.mat', simuName, paramToAnalyze, simuNumber), 'nomReward');
+        save(sprintf('mat/%s/%s/simu_%d/nomProbAT-%d.mat', simuName, paramToAnalyze, simuNumber), 'nomProbAT');
+        save(sprintf('mat/%s/%s/simu_%d/totalUtilityAllocation-%d.mat', simuName, paramToAnalyze, simuNumber), 'totalUtilityAllocation');
+        save(sprintf('mat/%s/%s/simu_%d/SimuParamsCell.mat', simuName, paramToAnalyze, simuNumber), 'SimuParamsCell');
         
         figure;
         [mechNomReward, meshNomProbAT] = meshgrid(nomReward, nomProbAT);
@@ -267,8 +267,8 @@ end
     function [] = analyzeTimeNumberAgentsTasks()
         
         % Setting of the varying parameters
-        nAVect = 1:4:60;
-        nTVect = 1:4:60;
+        nAVect = 1:2:80;
+        nTVect = 1:2:80;
         totalUtilityAllocation = zeros(length(nAVect), length(nTVect));
         totalComputationTime = zeros(length(nAVect), length(nTVect));
         
@@ -339,12 +339,12 @@ end
             end
         end
         
-        mkdir(sprintf('mat/%s/simu_%d', simuName, simuNumber));
-        save(sprintf('mat/%s/simu_%d/nAVect-%d.mat', simuName, simuNumber), 'nAVect');
-        save(sprintf('mat/%s/simu_%d/nTVect-%d.mat', simuName, simuNumber), 'nTVect');
-        save(sprintf('mat/%s/simu_%d/totalUtilityAllocation-%d.mat', simuName, simuNumber), 'totalUtilityAllocation');
-        save(sprintf('mat/%s/simu_%d/totalComputationTime-%d.mat', simuName, simuNumber), 'totalComputationTime');
-        save(sprintf('mat/%s/simu_%d/SimuParamsCell.mat', simuName, simuNumber), 'SimuParamsCell');
+        mkdir(sprintf('mat/%s/%s/simu_%d', simuName, paramToAnalyze, simuNumber));
+        save(sprintf('mat/%s/%s/simu_%d/nAVect-%d.mat', simuName, paramToAnalyze, simuNumber), 'nAVect');
+        save(sprintf('mat/%s/%s/simu_%d/nTVect-%d.mat', simuName, paramToAnalyze, simuNumber), 'nTVect');
+        save(sprintf('mat/%s/%s/simu_%d/totalUtilityAllocation-%d.mat', simuName, paramToAnalyze, simuNumber), 'totalUtilityAllocation');
+        save(sprintf('mat/%s/%s/simu_%d/totalComputationTime-%d.mat', simuName, paramToAnalyze, simuNumber), 'totalComputationTime');
+        save(sprintf('mat/%s/%s/simu_%d/SimuParamsCell.mat', simuName, paramToAnalyze, simuNumber), 'SimuParamsCell');
         
         [mechnAVect, meshnTVect] = meshgrid(nAVect, nTVect);
         
@@ -365,11 +365,11 @@ end
     function [] = analyzeTimeRatioLoiteringTasks()
         
         % Setting of the varying parameters
-        ntLoiterVect = 1:nT;
-        totalUtilityAllocation = zeros(length(ntLoiterVect), 1);
-        totalComputationTime = zeros(length(ntLoiterVect), 1);
+        ntLoiterVect = 0:nT;
+        totalUtilityAllocation = zeros(length(ntLoiterVect+1), 1);
+        totalComputationTime = zeros(length(ntLoiterVect+1), 1);
         
-        for k = 1:length(ntLoiterVect)
+        for k = 1:length(ntLoiterVect)+1
             
             ntLoiter = ntLoiterVect(k);
             
@@ -397,7 +397,7 @@ end
             [S_CBBA, pCBBA, ~, ~, Agents] = CBBASolution(Agents, G, Tasks);
             %pCBBA
             totalComputationTime(k) = toc;
-            k
+            ntLoiter
             
             totalUtilityAllocation(k) = S_CBBA;
             
@@ -406,11 +406,11 @@ end
             end
         end
         
-        mkdir(sprintf('mat/%s/simu_%d', simuName, simuNumber));
-        save(sprintf('mat/%s/simu_%d/ntLoiterVect-%d.mat', simuName, simuNumber), 'ntLoiterVect');
-        save(sprintf('mat/%s/simu_%d/totalUtilityAllocation-%d.mat', simuName, simuNumber), 'totalUtilityAllocation');
-        save(sprintf('mat/%s/simu_%d/totalComputationTime-%d.mat', simuName, simuNumber), 'totalComputationTime');
-        save(sprintf('mat/%s/simu_%d/SimuParamsCell.mat', simuName, simuNumber), 'SimuParamsCell');
+        mkdir(sprintf('mat/%s/%s/simu_%d', simuName, paramToAnalyze, simuNumber));
+        save(sprintf('mat/%s/%s/simu_%d/ntLoiterVect-%d.mat', simuName, paramToAnalyze, simuNumber), 'ntLoiterVect');
+        save(sprintf('mat/%s/%s/simu_%d/totalUtilityAllocation-%d.mat', simuName, paramToAnalyze, simuNumber), 'totalUtilityAllocation');
+        save(sprintf('mat/%s/%s/simu_%d/totalComputationTime-%d.mat', simuName, paramToAnalyze, simuNumber), 'totalComputationTime');
+        save(sprintf('mat/%s/%s/simu_%d/SimuParamsCell.mat', simuName, paramToAnalyze, simuNumber), 'SimuParamsCell');
        
         figure;
         plot(ntLoiterVect, totalUtilityAllocation);

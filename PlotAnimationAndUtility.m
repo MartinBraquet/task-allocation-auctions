@@ -1,4 +1,4 @@
-function M = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_completion_target, rt_full_simu, PlotCommLimit)
+function M = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_completion_target, rt_full_simu, PlotCommLimit, saveMovie)
     clear M;
     
     n_rounds = SimuParamsCell.n_rounds;
@@ -9,6 +9,10 @@ function M = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_comple
     radius_t = SimuParamsCell.radius_t;
     task_type = SimuParamsCell.task_type;
     comm_distance = SimuParamsCell.comm_distance;
+    
+    nRatioPointsFigure = 1;
+    lineWidthFigure = 4;
+    markerSizeFigure = 20;
     
     na = size(J,2);
     J_tot = J + J_to_completion_target;
@@ -27,20 +31,21 @@ function M = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_comple
     xlim([0 1]); ylim([0 1]);
     t = (0:n_rounds) * time_step;
     set(win,'Nextplot','add'); set(gcf,'color','w');
+    set(win,'fontsize', 25);
     for k = 2:n_rounds-1
         cla(win(1));
         t_plot = time_step * (k-1);
         for i = 1:na
-            plot(win(1), t(1:k), J_tot(1:k,i), 'LineWidth', 1.5);
+            plot(win(1), t(1:k), J_tot(1:k,i), 'LineWidth', 2);
         end
         cla(win(2));
-        plot(win(2), t(1:k), sum(rt_full_simu(1:k,:),2), 'k--', 'LineWidth', 2);
+        plot(win(2), t(1:k), sum(rt_full_simu(1:k,:),2), 'k--', 'LineWidth', 3);
         U_tot = sum(rt_full_simu(1:k-1,:),2) - sum(J_tot(2:k,:),2);
         U_tot(1,:) = 0;
-        plot(win(2), t(1:k-1), U_tot, 'k', 'LineWidth', 2);
+        plot(win(2), t(1:k-1), U_tot, 'k', 'LineWidth', 3);
         legend(win(2), 'Reward', 'Utility', 'Location', 'SouthEast');
         cla(win(3));
-        PlotAllocTime(X_full_simu, t_plot, time_step, pos_t, map_width, colors, radius_t, task_type);
+        PlotAllocTime(X_full_simu, t_plot, time_step, pos_t, map_width, colors, radius_t, task_type, nRatioPointsFigure, lineWidthFigure, markerSizeFigure);
         if PlotCommLimit
             pos_a = zeros(na,2);
             for i = 1:na
@@ -48,10 +53,16 @@ function M = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_comple
             end
             PlotAgentRange(pos_a, comm_distance, colors, '')
         end
-        %drawnow;
-        M(k-1) = getframe(gcf,[74 47 450 350]);
+        drawnow;
+        if saveMovie
+            M(k-1) = getframe(gcf,[74 47 450 350]);
+        end
     end
-    figure;
-    fps = floor(1 / time_step);
-    movie(M,1,fps);
+    if saveMovie
+        figure;
+        fps = floor(1 / time_step);
+        movie(M,1,fps);
+    else
+        M = [];
+    end
 end

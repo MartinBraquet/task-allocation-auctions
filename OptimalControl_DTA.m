@@ -7,9 +7,9 @@
 addpath('CNP_CBBA/');
 close all; clear all;
 rng('default');
-rng(6);
+rng(7);
 
-simu_number = 5;
+simu_number = 7;
 simu_name = 'Dynamics';
 
 [ComputeOpt ComputeSGA ComputeCBBA] = deal(0,0,1);
@@ -22,8 +22,9 @@ plot_range = 0;
 
 na = 10;
 nt = 10;
-Lt = 1;
+n_rounds = 1000;
 
+Lt = 1;
 nt_loiter = ceil(0.5*nt);
 task_type = zeros(nt,1);
 task_type(1:nt_loiter) = 1;
@@ -33,7 +34,6 @@ map_width = 1;
 comm_distance = 0.3 * map_width;
 
 simu_time = 10;
-n_rounds = 50;
 time_step = simu_time / n_rounds;
 time_start = 0;
 
@@ -82,13 +82,13 @@ end
 
 
 % Reward after task completion
-r_nom = 0.02;
+r_nom = 0.2;
 if uniform_tasks
     r_bar = r_nom * ones(nt,1);
 else
     r_bar = r_nom * rand(nt,1);
 end
-r_bar(task_type == 1) = 2 * r_bar(task_type == 1);
+r_bar(task_type == 1) = 5 * r_bar(task_type == 1);
     
 % Probability that agent i successfully completes task j
 if uniform_agents
@@ -254,7 +254,7 @@ for i_round = 1:n_rounds
     p_CBBA_full_simu{i_round} = p_CBBA;
     S_CBBA_ALL_full_simu(i_round,:) = S_CBBA_ALL;
     J(i_round+1,:) = J(i_round,:) + J_curr;
-    PlotAlloc(X, n_rounds_loop, na, colors, 'CBBA solution');
+    plotMapAllocation(X, n_rounds_loop, na, colors, 'CBBA solution');
     
     for j = completed_tasks_round
             rt_completed = rt_completed + rt_curr(j);

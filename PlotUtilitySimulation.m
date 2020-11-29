@@ -1,18 +1,19 @@
-close all;
+close all; clear all;
 
-k = 0;
-
-load(sprintf('mat/X_just_saved_%d.mat', k));
-load(sprintf('mat/J_to_completion_target_%d.mat', k));
-load(sprintf('mat/J_%d.mat', k));
-load(sprintf('mat/p_CBBA_just_saved_%d.mat', k));
-load(sprintf('mat/S_CBBA_ALL_just_saved_%d.mat', k));
-load(sprintf('mat/rt_just_saved_%d.mat', k));
-load(sprintf('mat/SavingCellParams.mat', k));
+simu_number = 6;
+CommLimit = 0;
+load(sprintf('mat/Dynamics/simu_%d/SimuParamsCell.mat', simu_number));
+load(sprintf('mat/Dynamics/simu_%d/X_just_saved_CommLimit_%d.mat', simu_number, CommLimit));
+load(sprintf('mat/Dynamics/simu_%d/J_to_completion_target_CommLimit_%d.mat', simu_number, CommLimit));
+load(sprintf('mat/Dynamics/simu_%d/J_CommLimit_%d.mat', simu_number, CommLimit));
+load(sprintf('mat/Dynamics/simu_%d/p_CBBA_just_saved_CommLimit_%d.mat', simu_number, CommLimit));
+load(sprintf('mat/Dynamics/simu_%d/S_CBBA_ALL_just_saved_CommLimit_%d.mat', simu_number, CommLimit));
+load(sprintf('mat/Dynamics/simu_%d/rt_just_saved_CommLimit_%d.mat', simu_number, CommLimit));
 
 na = size(J,2);
 
 J(isnan(J)) = 0;
+
 J_to_completion_target(isnan(J_to_completion_target)) = 0;
 
 %rt = p_CBBA_full_simu ...

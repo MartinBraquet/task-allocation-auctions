@@ -113,9 +113,6 @@ end
 
 % 
 
-if CBBA_Data(1).path ~= 3
-    io = 1;
-end
 
 
 % Compute the total score of the CBBA assignment

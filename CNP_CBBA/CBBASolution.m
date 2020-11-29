@@ -176,9 +176,15 @@ function [S_CBBA, p, S_CBBA_ALL, rt, Agents] = CBBASolution(Agents, G, TasksCell
         else
             if tasks(task_idx).tloiter > 0 && (tasks(task_idx).tf - tasks(task_idx).tloiter) / tasks(task_idx).tloiter < 1
                 p{i} = Agents.previous_task(i);
+                agents(i).rin_task = [];
             else
                 Agents.previous_task(i) = task_idx;
                 Agents.previous_winnerBids(i) = S_CBBA_ALL_agents(i);
+            end
+            if i==2
+                a = Agents.previous_task(i);
+                a
+                task_idx
             end
         end
     end
