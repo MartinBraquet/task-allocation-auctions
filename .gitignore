@@ -1,3 +1,4 @@
 *.m~
 *.avi*
 *.fig
+src/mat/*
