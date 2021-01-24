@@ -2,3 +2,4 @@
 *.avi*
 *.fig
 src/mat/*
+tex/*
