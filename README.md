@@ -10,7 +10,7 @@ A paper resulting from these simulations is expected to be published around Febr
 
 Note: this repository is actively in progress and needs to be cleaned in the near future.
 
-## 2D map of the dynamic task allocation (10 agents and 10 tasks) with associated reward, cost and utility
+#### 2D map of the dynamic task allocation (10 agents and 10 tasks) with associated reward, cost and utility
 
 With communication limitation:
 
