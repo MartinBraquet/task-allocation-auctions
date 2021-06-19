@@ -3,7 +3,11 @@ Dynamic decentralized task allocation algorithms for multi-agent systems using a
 
 Master's research at The University of Texas at Austin in the research group of Efstathios Bakolas.
 
-A paper resulting from these simulations is expected to be published around February 2021.
+The paper resulting from these simulations has been published at the Modeling, Estimation and Control Conference (MECC 2021).
+
+To cite this work: 
+
+Braquet, M. and Bakolas E., "Greedy Decentralized Auction-based Task Allocation for Multi-Agent Systems", *Modeling, Estimation and Control Conference (MECC)*, 2021.
 
 * For the dynamic task allocation, run `OptimalControl_DTA.m`.
 * For the sensitivity analysis of the parameters, run `optimalControlParametersAnalysis.m`.
