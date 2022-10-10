@@ -9,11 +9,12 @@ if sum(GCAA_Data.winnerBids) == 0
     return;
 end
 
-for agent_idx = 1:GCAA_Params.N
+%for agent_idx = 1:GCAA_Params.N
     if GCAA_Data.winners(agent_idx) > 0
         All_winners = (GCAA_Data.winners == GCAA_Data.winners(agent_idx)) .* (GCAA_Data.fixedAgents == 0);
         if sum(All_winners) > 0
             All_winnerBids = GCAA_Data.winnerBids .* All_winners;
+            All_winnerBids(All_winnerBids == 0) = -1e16;
             [maxBid, idxMaxBid] = max(All_winnerBids);
             All_losers = All_winners; All_losers(idxMaxBid) = 0;
             GCAA_Data.winners = (~All_losers) .* GCAA_Data.winners;

@@ -1,4 +1,4 @@
-function M = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_completion_target, rt_full_simu, PlotCommLimit, saveMovie)
+function M = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_completion_target, rt_full_simu, PlotCommLimit, saveMovie, filename)
     clear M;
     
     n_rounds = SimuParamsCell.n_rounds;
@@ -65,4 +65,8 @@ function M = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_comple
     else
         M = [];
     end
+    frame = getframe(win);
+    im = frame2im(frame);
+    [imind,cm] = rgb2ind(im,256);
+    imwrite(imind,cm,filename,'gif','WriteMode','append','DelayTime',obj.t_hist(step));
 end

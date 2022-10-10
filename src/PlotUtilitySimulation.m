@@ -1,6 +1,6 @@
 close all; clear all;
 
-simu_number = 6;
+simu_number = 7;
 CommLimit = 0;
 load(sprintf('mat/Dynamics/simu_%d/SimuParamsCell.mat', simu_number));
 load(sprintf('mat/Dynamics/simu_%d/X_just_saved_CommLimit_%d.mat', simu_number, CommLimit));

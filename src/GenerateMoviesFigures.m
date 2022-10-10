@@ -1,7 +1,7 @@
 close all; clear all;
 
-simu_number = 6;
-CommLimit = 0;
+simu_number = 7;
+CommLimit = 1;
 PlotCommLimit = 0;
 saveMovie = 0;
 
@@ -13,7 +13,8 @@ load(sprintf('mat/Dynamics/simu_%d/S_GCAA_ALL_just_saved_CommLimit_%d.mat', simu
 load(sprintf('mat/Dynamics/simu_%d/rt_just_saved_CommLimit_%d.mat', simu_number, CommLimit));
 load(sprintf('mat/Dynamics/simu_%d/SimuParamsCell.mat', simu_number));
 
-MAllocUtil = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_completion_target, rt_full_simu, PlotCommLimit, saveMovie);
+filename = sprintf('mat/Dynamics/MAllocUtil_%d.mat', CommLimit);
+MAllocUtil = PlotAnimationAndUtility(X_full_simu, SimuParamsCell, J, J_to_completion_target, rt_full_simu, PlotCommLimit, saveMovie, filename);
 if saveMovie
     save(sprintf('mat/Dynamics/MAllocUtil_%d.mat', CommLimit), 'MAllocUtil');
 end
@@ -24,7 +25,7 @@ end
 % v = VideoWriter('Film_alloc_5_5.avi');
 % v.Quality = 100;
 % open(v);
-% writeVideo(v,M);
+% writeVideo(v,MAllocUtil);
 % close(v);
 
 

@@ -27,7 +27,7 @@ for j = 1:M
     task_value(j) = tasks(j).value;
 end
 
-U = 0;
+U = -1e14;
 b = [];
 
 winners_matrix = zeros(GCAA_Params.N, GCAA_Params.M);
@@ -37,8 +37,23 @@ for i = 1:GCAA_Params.N
     end
 end
 
+% Only pick a task that is not assigned yet
+availTasks = [];
+for j = 1:GCAA_Params.M
+    if ~any(GCAA_Data.winners == j)
+        availTasks = [availTasks, j];
+    end
+end
 
-for j = 1:M
+% If all tasks are assigned, pick any task with positive utility
+if isempty(availTasks)
+    availTasks = 1:M;
+    allTasksAssigned = true;
+    U = 0;
+end
+
+newRin = false;
+for j = availTasks
     if task_tf(j) > task_tloiter(j)
         b_new = j;
         
@@ -51,6 +66,7 @@ for j = 1:M
             b = b_new;
             rin_t = rin_t_new;
             vin_t = vin_t_new;
+            newRin = true;
         end
     end
             
@@ -66,7 +82,7 @@ end
 
 GCAA_Data.winners(agent_idx) = b;
 
-if U > 0
+if newRin
     agent.rin_task = rin_t;
     agent.vin_task = vin_t;
 end
