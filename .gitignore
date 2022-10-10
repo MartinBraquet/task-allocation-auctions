@@ -3,3 +3,4 @@
 *.fig
 src/mat/*
 tex/*
+backup movies/*
