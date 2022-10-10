@@ -7,7 +7,7 @@
 addpath('GreedyCoalitionAuctionAlgorithm/');
 close all; clear all;
 rng('default');
-rng(7);
+rng(5);
 
 simu_number = 7;
 simu_name = 'Dynamics';
@@ -20,9 +20,9 @@ uniform_agents = 0;
 uniform_tasks = 0;
 plot_range = 0;
 
-na = 10;
-nt = 10;
-n_rounds = 1000;
+na = 5;
+nt = 4;
+n_rounds = 200;
 
 Lt = 1;
 nt_loiter = ceil(0.5*nt);
@@ -31,7 +31,7 @@ task_type(1:nt_loiter) = 1;
 lambda = 1;
 
 map_width = 1;
-comm_distance = 0.3 * map_width;
+comm_distance = 0.5 * map_width;
 
 simu_time = 10;
 time_step = simu_time / n_rounds;
@@ -188,7 +188,7 @@ for i_round = 1:n_rounds
         plot(pos_a_loop(i,1), pos_a_loop(i,2), '*', 'Color', colors(i,:), 'MarkerSize', 10, 'DisplayName', 'Agents');
     end
     plot(pos_t(:,1), pos_t(:,2),'rs', 'MarkerSize', 10, 'DisplayName', 'Targets', 'MarkerFaceColor',[1 .6 .6]);
-    if plot_range && plot_range
+    if plot_range
         PlotAgentRange(pos_a_loop, comm_distance, colors, 'Comm Range');
     end
     
