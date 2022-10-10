@@ -1,0 +1,135 @@
+%%
+%%  This file name is ``remark.sty''
+%%
+%       ****************************************
+%       *         REMARK ENVIRONMENTS         *
+%       ****************************************
+%
+%  The user creates his own remark-like environments with the command
+%      \newremark{NAME}{TEXT}[COUNTER]  or
+%      \newremark{NAME}[OLDNAME]{TEXT}
+%  This defines the environment NAME to be just as one would expect a
+%  remark environment to be, except that it prints ``TEXT'' instead of
+%  ``Remark''.
+%
+%  If OLDNAME is given, then environments NAME and OLDNAME use the same
+%  counter, so using a NAME environment advances the number of the next
+%  NAME environment, and vice-versa.
+%
+%  If COUNTER is given, then environment NAME is numbered within COUNTER.
+%  E.g., if COUNTER = subsection, then the first NAME in subsection 7.2
+%  is numbered TEXT 7.2.1.
+%
+%  The way NAME environments are numbered can be changed by redefining
+%  \theNAME.
+%
+%  DOCUMENT STYLE PARAMETERS
+%
+%  \@rmkcounter{COUNTER} : A command such that
+%               \edef\theCOUNTER{\@rmkcounter{COUNTER}}
+%         defines \theCOUNTER to produce a number for a remark environment.
+%         The default is:
+%            BEGIN \noexpand\arabic{COUNTER} END
+%
+%  \@rmkcountersep : A separator placed between a remark number and
+%         the number of the counter within which it is numbered.
+%         E.g., to make the third remark of section 7.2 be numbered
+%         7.2-3, \@rmkcountersep should be \def'ed to '-'.  Its
+%         default is '.'.
+%
+%  \@beginremark{NAME}{NUMBER} : A command that begins a remark
+%         environment for a 'remark' named 'NAME NUMBER' --
+%         e.g., \@beginremark{Lemma}{3.7} starts Lemma 3.7.
+%
+%  \@opargbeginremark{NAME}{NUMBER}{OPARG} : A command that begins a remark
+%         environment for a 'remark' named 'NAME NUMBER' with optional
+%         argument OPARG -- e.g., \@beginremark{Lemma}{3.7}{Jones}
+%         starts `Lemma 3.7 (Jones):'.
+%
+%  \@endremark : A command that ends a remark environment.
+%
+% \newremark{NAME}{TEXT}[COUNTER] ==
+%   BEGIN
+%     if \NAME is definable
+%       then \@definecounter{NAME}
+%            if COUNTER present
+%              then \@addtoreset{NAME}{COUNTER} fi
+%                   \theNAME ==  BEGIN \theCOUNTER \@rmkcountersep
+%                                       eval\@rmkcounter{NAME}      END
+%              else \theNAME ==  BEGIN eval\@rmkcounter{NAME} END
+%            \NAME == \@rmk{NAME}{TEXT}
+%            \endNAME == \@endremark
+%       else  error
+%     fi
+%   END
+%
+% \newremark{NAME}[OLDNAME]{TEXT}==
+%   BEGIN
+%     if \NAME is definable
+%       then \theNAME == \theOLDNAME
+%            \NAME == \@rmk{OLDNAME}{TEXT}
+%            \endNAME == \@endremark
+%       else  error
+%     fi
+%   END
+%
+% \@rmk{NAME}{TEXT} ==
+%   BEGIN
+%    \refstepcounter{NAME}
+%    if next char = [
+%       then \@yrmk{NAME}{TEXT}
+%       else \@xrmk{NAME}{TEXT}
+%    fi
+%   END
+%
+% \@xrmk{NAME}{TEXT} ==
+%   BEGIN
+%    \@beginremark{TEXT}{\theNAME}
+%    \ignorespaces
+%   END
+%
+% \@yrmk{NAME}{TEXT}[OPARG] ==
+%   BEGIN
+%    \@opargbeginremark{TEXT}{\theNAME}{OPARG}
+%    \ignorespaces
+%   END
+%
+\def\newremark#1{\@ifnextchar[{\@ormk{#1}}{\@nrmk{#1}}}
+
+\def\@nrmk#1#2{%
+\@ifnextchar[{\@xnrmk{#1}{#2}}{\@ynrmk{#1}{#2}}}
+
+\def\@xnrmk#1#2[#3]{\expandafter\@ifdefinable\csname #1\endcsname
+{\@definecounter{#1}\@addtoreset{#1}{#3}%
+\expandafter\xdef\csname the#1\endcsname{\expandafter\noexpand
+  \csname the#3\endcsname \@rmkcountersep \@rmkcounter{#1}}%
+\global\@namedef{#1}{\@rmk{#1}{#2}}\global\@namedef{end#1}{\@endremark}}}
+
+\def\@ynrmk#1#2{\expandafter\@ifdefinable\csname #1\endcsname
+{\@definecounter{#1}%
+\expandafter\xdef\csname the#1\endcsname{\@rmkcounter{#1}}%
+\global\@namedef{#1}{\@rmk{#1}{#2}}\global\@namedef{end#1}{\@endremark}}}
+
+\def\@ormk#1[#2]#3{\expandafter\@ifdefinable\csname #1\endcsname
+  {\global\@namedef{the#1}{\@nameuse{the#2}}%
+\global\@namedef{#1}{\@rmk{#2}{#3}}%
+\global\@namedef{end#1}{\@endremark}}}
+
+\def\@rmk#1#2{\refstepcounter
+    {#1}\@ifnextchar[{\@yrmk{#1}{#2}}{\@xrmk{#1}{#2}}}
+
+\def\@xrmk#1#2{\@beginremark{#2}{\csname the#1\endcsname}\ignorespaces}
+\def\@yrmk#1#2[#3]{\@opargbeginremark{#2}{\csname
+       the#1\endcsname}{#3}\ignorespaces}
+
+%DEFAULT VALUES
+\def\@rmkcounter#1{\noexpand\arabic{#1}}
+\def\@rmkcountersep{.}
+%deleted September 2, 1986 MDK
+%\def\@makermknumber#1#2{\bf #1 #2:}
+\def\@beginremark#1#2{\trivlist \item[\hskip \labelsep{\bf #1\ #2}]}
+\def\@opargbeginremark#1#2#3{\trivlist
+      \item[\hskip \labelsep{\bf #1\ #2\ (#3)}]}
+\def\@endremark{\endtrivlist}
+
+
