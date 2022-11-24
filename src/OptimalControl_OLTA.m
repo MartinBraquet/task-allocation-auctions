@@ -4,7 +4,7 @@
 % Author: Martin Braquet
 % Date: September 2020
 
-addpath('CNP_GCAA/');
+addpath('GreedyCoalitionAuctionAlgorithm/');
 close all; clear all;
 rng('default');
 rng(8);

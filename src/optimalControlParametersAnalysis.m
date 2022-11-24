@@ -6,7 +6,7 @@
 
 function [] = optimalControlParametersAnalysis()
 
-addpath('CNP_GCAA/');
+addpath('GreedyCoalitionAuctionAlgorithm/');
 close all; clear all;
 rng('default');
 rng(6);
