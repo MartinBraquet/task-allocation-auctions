@@ -12,6 +12,8 @@ Braquet, M. and Bakolas E., "Greedy Decentralized Auction-based Task Allocation 
 * For the dynamic task allocation, run `OptimalControl_DTA.m`.
 * For the sensitivity analysis of the parameters, run `optimalControlParametersAnalysis.m`.
 
+To run the code in Matlab online: https://drive.matlab.com/sharing/f36a058f-99a4-4e38-a08e-0af800bd4ce8.
+
 #### 2D map of the dynamic task allocation (10 agents and 10 tasks) with associated reward, cost and utility
 
 With communication limitation:
