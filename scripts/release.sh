@@ -22,9 +22,9 @@ if [ -z "$tagged" ]; then
       --generate-notes
   echo "Created release"
 
-pip install wheel build twine
-python -m build
-twine upload -u __token__ -p $PYPI_API_TOKEN dist/*
+  pip install wheel build twine
+  python -m build
+  twine upload -u __token__ -p $PYPI_API_TOKEN dist/* --verbose
 
 else
   echo "Tag $tag already exists"
