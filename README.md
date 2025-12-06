@@ -1,22 +1,27 @@
+[![Release](https://img.shields.io/pypi/v/gcaa?label=Release&style=flat-square)](https://pypi.org/project/gcaa/)
+[![CI](https://github.com/MartinBraquet/task-allocation-auctions/actions/workflows/ci.yml/badge.svg)](https://github.com/MartinBraquet/task-allocation-auctions/actions/workflows/ci.yml/badge.svg)
+[![CD](https://github.com/MartinBraquet/task-allocation-auctions/actions/workflows/cd.yml/badge.svg)](https://github.com/MartinBraquet/task-allocation-auctions/actions/workflows/cd.yml/badge.svg)
+[![Coverage](https://codecov.io/gh/MartinBraquet/task-allocation-auctions/branch/master/graph/badge.svg)](https://codecov.io/gh/MartinBraquet/task-allocation-auctions)
+[![Downloads](https://static.pepy.tech/badge/gcaa)](https://pepy.tech/project/gcaa) 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 # Task Allocation using Auctions
-Dynamic decentralized task allocation algorithms for multi-agent systems using a greedy auction algorithm.
+
+Dynamic decentralized task allocation algorithms for multi-agent systems using a greedy auction algorithm. It's available in Matlab and Python.
 
 Official GitHub repository: https://github.com/MartinBraquet/task-allocation-auctions.
 
 Master's research at The University of Texas at Austin in the research group of Efstathios Bakolas.
 
-The paper resulting from these simulations has been published at the Modeling, Estimation and Control Conference (MECC 2021).
+The paper resulting from these simulations has been published at the Modeling, Estimation, and Control Conference (MECC 2021).
 
 To cite this work: 
 
-Braquet, M. and Bakolas E., "Greedy Decentralized Auction-based Task Allocation for Multi-Agent Systems", *Modeling, Estimation and Control Conference (MECC)*, 2021.
+> Braquet, M. and Bakolas E., "Greedy Decentralized Auction-based Task Allocation for Multi-Agent Systems", *Modeling, Estimation and Control Conference (MECC)*, 2021.
 
-* For the dynamic task allocation, run `OptimalControl_DTA.m`.
-* For the sensitivity analysis of the parameters, run `optimalControlParametersAnalysis.m`.
+## Demo
 
-To run the code in Matlab online: https://drive.matlab.com/sharing/f36a058f-99a4-4e38-a08e-0af800bd4ce8.
-
-#### 2D map of the dynamic task allocation (10 agents and 10 tasks) with associated reward, cost and utility
+2D map of the dynamic task allocation (10 agents and 10 tasks) with associated reward, cost, and utility
 
 With communication limitation:
 
@@ -25,3 +30,46 @@ With communication limitation:
 Without communication limitation:
 
 ![Alt Text](https://martinbraquet.com/wp-content/uploads/Dynamic-Task-Agent-Allocation-noLimit.gif)
+
+## Matlab
+
+* For the dynamic task allocation, run `OptimalControl_DTA.m`.
+* For the sensitivity analysis of the parameters, run `optimalControlParametersAnalysis.m`.
+
+To run the code in Matlab online: https://drive.matlab.com/sharing/f36a058f-99a4-4e38-a08e-0af800bd4ce8.
+
+## Python
+
+### Installation
+
+The Python package works on any major OS (Linux, Windows, and macOS) and with Python >= 3.11.
+
+The most straightforward way is to simply install it from PyPI via:
+```bash
+pip install gcaa
+```
+
+If you want to install it from source, which is necessary for development, follow the instructions [here](docs/installation.md).
+
+If some dependencies release changes that break the code, you can install the project from its lock file—which fixes the dependency versions to ensure reproducibility:
+```bash
+pip install -r requirements.txt
+```
+
+### Usage
+
+...
+
+### Tests
+
+```shell
+pytest gcaa
+```
+
+### Feedback
+
+For any issue / bug report / feature request, open an [issue](https://github.com/MartinBraquet/task-allocation-auctions/issues).
+
+### Contributions
+
+To provide upgrades or fixes, open a [pull request](https://github.com/MartinBraquet/task-allocation-auctions/pulls).

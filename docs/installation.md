@@ -1,6 +1,5 @@
 # Installation from source
 
-
 First, download the project locally:
 ```shell
 git clone git@github.com:MartinBraquet/task-allocation-auctions.git
