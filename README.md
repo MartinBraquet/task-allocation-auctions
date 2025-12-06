@@ -33,12 +33,16 @@ Without communication limitation:
 
 ## Matlab
 
+In the [matlab](matlab) folder.
+
 * For the dynamic task allocation, run `OptimalControl_DTA.m`.
 * For the sensitivity analysis of the parameters, run `optimalControlParametersAnalysis.m`.
 
 To run the code in Matlab online: https://drive.matlab.com/sharing/f36a058f-99a4-4e38-a08e-0af800bd4ce8.
 
 ## Python
+
+In the [gcaa](gcaa) folder.
 
 ### Installation
 

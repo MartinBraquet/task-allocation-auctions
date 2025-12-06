@@ -1,12 +1,12 @@
 *.m~
 *.avi*
 *.fig
-src/mat/*
+matlab/mat/*
 tex/*
 backup movies/*
 
 __pycache__/
-src/gcaa/.ipynb_checkpoints/
+matlab/gcaa/.ipynb_checkpoints/
 *.egg-info/
 /build/
 /dist/
