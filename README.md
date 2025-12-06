@@ -16,8 +16,6 @@ Braquet, M. and Bakolas E., "Greedy Decentralized Auction-based Task Allocation 
 
 To run the code in Matlab online: https://drive.matlab.com/sharing/f36a058f-99a4-4e38-a08e-0af800bd4ce8.
 
-Want a Python implementation as well? Please vote [here](https://github.com/MartinBraquet/task-allocation-auctions/discussions/5) and we'll do our best to accomodate the communities' needs!
-
 #### 2D map of the dynamic task allocation (10 agents and 10 tasks) with associated reward, cost and utility
 
 With communication limitation:
