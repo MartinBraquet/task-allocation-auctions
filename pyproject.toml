@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["gcaa*"]
+
+#[tool.setuptools.package-data]
+#myModule = ["*.pt"]
+
+[project]
+name = "gcaa"
+version = "0.1.0"
+authors = [
+    { name = "Martin" },
+]
+description = "Dynamic decentralized task allocation algorithms for multi-agent systems using a greedy auction algorithm"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    'ipython',
+    "igraph",
+    'matplotlib',
+    'numpy',
+    'pandas',
+    "plotly",
+    'pydantic',
+]
+
+
+[project.optional-dependencies]
+all = ["gcaa[dev, testing]"]
+dev = [
+    "black",
+    "isort",
+    "flake8",
+    "flake8-pyproject",
+    "nox",
+    "notebook",
+    'pip-tools',
+    'build',
+]
+testing = [
+    "pytest",
+    "pytest-cov",
+    "pytest-env",
+    "pytest-html",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/MartinBraquet/task-allocation-auctions"
+"Bug Tracker" = "https://github.com/MartinBraquet/task-allocation-auctions/issues"

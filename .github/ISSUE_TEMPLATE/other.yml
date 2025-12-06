@@ -1,0 +1,15 @@
+name: Other
+description: Any other question or issue
+
+body:
+- type: textarea
+  attributes:
+    label: Issue
+    description: >
+      A clear and concise description of the question or issue
+  validations:
+    required: true
+- type: markdown
+  attributes:
+    value: >
+      Thanks for contributing!

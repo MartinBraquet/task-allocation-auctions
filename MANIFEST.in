@@ -1,0 +1,3 @@
+recursive-include gcaa *.py
+recursive-include gcaa/resources *.png
+recursive-include gcaa/tests/training/data *.pkl

@@ -4,3 +4,25 @@
 src/mat/*
 tex/*
 backup movies/*
+
+__pycache__/
+src/gcaa/.ipynb_checkpoints/
+*.egg-info/
+/build/
+/dist/
+.idea/
+*/.ipynb_checkpoints/*
+*/.idea/*
+*/.pytest_cache/*
+/src/gcaa/torchlogs/*
+*.coverage
+*coverage.xml
+report
+martin/model
+*.pdf
+
+/gcaa/data/
+/scripts/aws/
+/scripts/cronos.sh
+.obsidian
+
