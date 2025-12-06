@@ -5,14 +5,14 @@ name: CD
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@master
+        uses: actions/checkout@main
         with:
           fetch-depth: 0  # To fetch all history for tags
 
