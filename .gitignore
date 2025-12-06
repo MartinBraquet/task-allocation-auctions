@@ -14,7 +14,6 @@ src/gcaa/.ipynb_checkpoints/
 */.ipynb_checkpoints/*
 */.idea/*
 */.pytest_cache/*
-/src/gcaa/torchlogs/*
 *.coverage
 *coverage.xml
 report
