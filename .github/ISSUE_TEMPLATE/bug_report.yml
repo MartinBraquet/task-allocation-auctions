@@ -12,8 +12,7 @@ body:
       label: System Info
       description: |
         Please share your system info with us.
-
-      value: >
+      value: |
         OS version:
         Python / Matlab version:
         The current version of `gcaa` being used (if python):
