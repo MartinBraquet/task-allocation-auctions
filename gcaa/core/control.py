@@ -139,7 +139,6 @@ def OptimalControlSolution(pos_a, v_a, pos_t, v_t, radius_t, p_GCAA, agents, tf_
                     alpha = 0
                     u = (1 + alpha) * norm_a * r_target_circle / d if d > 0 else np.zeros_like(r_target_circle)
                     X[:, i, k+1] = X[:, i, k] + time_step * (A @ X[:, i, k] + (B @ u).flatten())
-                    # X[:, i, k+1] = X[:, i, k]
 
                 if k == 0:
                     J[0, i] = 0.5 * np.linalg.norm(u)**2 * time_step

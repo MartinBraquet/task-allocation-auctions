@@ -303,6 +303,8 @@ def optimal_control_dta(
         # Fully connected graph initially (no self links)
         G = ~np.eye(na, dtype=bool)
 
+        historical_path = np.zeros((n_rounds, na, 2))
+
         for i_round in range(n_rounds):  # corresponds to MATLAB 1:n_rounds
 
             plt.clf()
@@ -440,12 +442,10 @@ def optimal_control_dta(
             # MATLAB used: pos_a_loop = X(1:2,:,2)'; v_a_loop = X(3:4,:,2)';
             # Assuming X is a numpy array shaped (4, na, n_horizon) and MATLAB-like indexing:
             # take timestep index 1 (MATLAB 2) -> Python index 1
-            try:
-                pos_a_loop = X[0:2, :, 1].T.copy()
-                v_a_loop = X[2:4, :, 1].T.copy()
-            except Exception:
-                # If X has a different structure, this may raise; keep consistent with MATLAB intent.
-                raise
+            pos_a_loop = X[0:2, :, 1].T.copy()
+            v_a_loop = X[2:4, :, 1].T.copy()
+
+            historical_path[i_round] = pos_a_loop
 
             # Update remaining time / rounds / task times
             simu_time_loop -= time_step
@@ -455,6 +455,7 @@ def optimal_control_dta(
 
         U_tot_final = rt_completed - np.sum(J[-1, :])
         print("U_tot_final:", U_tot_final)
+        return dict(historical_path=historical_path)
 
     print("Simulation finished successfully.")
 
