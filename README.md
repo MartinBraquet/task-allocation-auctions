@@ -19,6 +19,8 @@ To cite this work:
 
 > Braquet, M. and Bakolas E., "Greedy Decentralized Auction-based Task Allocation for Multi-Agent Systems", *Modeling, Estimation and Control Conference (MECC)*, 2021.
 
+Official paper link: https://doi.org/10.1016/j.ifacol.2021.11.249.
+
 ## Demo
 
 2D map of the dynamic task allocation (10 agents and 10 tasks) with associated reward, cost, and utility
