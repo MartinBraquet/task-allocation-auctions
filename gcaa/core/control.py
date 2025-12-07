@@ -63,7 +63,7 @@ def ComputeCommandParamsWithVelocity(pos_a_curr, v_a_curr, pos_t_curr, v_t, tf, 
     norm2_a[~np.isfinite(norm2_a)] = 0.0
 
     # MATLAB: rho = 1/2 * trapz(t, norm2_a)
-    rho = 0.5 * np.trapz(norm2_a, t)
+    rho = 0.5 * np.trapezoid(norm2_a, t)
 
     u = a
     return u, r, v, t, rho
