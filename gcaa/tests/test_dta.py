@@ -9,6 +9,13 @@ class TestDTA(TestCase):
     def setUp(self):
         np.random.seed(0)
 
+    def test_fixed_alloc(self):
+        optimal_control_dta(
+            n_rounds=4,
+            na=3,
+            nt=2,
+        )
+
     def test(self):
         results = optimal_control_dta(
             n_rounds=20,
