@@ -1,5 +1,6 @@
 import time
 from dataclasses import dataclass
+from textwrap import wrap
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -120,15 +121,16 @@ def update_path(p, pos_a, pos_t, time_step, agents, nt):
 
 
 def optimal_control_dta(
-    simu_number=7,
-    simu_name="Dynamics",
     use_GCAA=0,
-    uniform_agents=1,
-    uniform_tasks=1,
-    plot_range=0,
+    uniform_agents=True,
+    uniform_tasks=True,
     na=5,
     nt=4,
-    n_rounds=50,
+    n_rounds=20,
+    limited_communication='both',
+    plot_range=0,
+    simu_number=7,
+    simu_name="Dynamics",
 ):
     """
     Optimal Control Dynamic Task Assignment (DTA)
@@ -259,7 +261,15 @@ def optimal_control_dta(
         kdrag=kdrag
     )
 
-    for CommLimit in (0,):
+    historical_path = np.zeros((n_rounds, na, 2))
+
+    if limited_communication == 'both':
+        communication_limits = (0, 1)
+    else:
+        communication_limits = (bool(limited_communication),)
+    print(communication_limits)
+
+    for CommLimit in communication_limits:
 
         # Clear / reset variables used in loop
         J = None
@@ -268,6 +278,8 @@ def optimal_control_dta(
         p_GCAA_full_simu = None
         S_GCAA_ALL = None
         X = None
+
+        comm_text = 'limited communication, ' if CommLimit else ''
 
         n_rounds_loop = n_rounds
         simu_time_loop = simu_time
@@ -303,27 +315,47 @@ def optimal_control_dta(
         # Fully connected graph initially (no self links)
         G = ~np.eye(na, dtype=bool)
 
-        historical_path = np.zeros((n_rounds, na, 2))
+        fig, ax = plt.subplots()
 
-        for i_round in range(n_rounds):  # corresponds to MATLAB 1:n_rounds
+        def wrap_title(event=None):
+            # Width of the figure in pixels
+            fig_width_px = fig.get_figwidth() * fig.dpi
 
-            plt.clf()
-            plt.xlim(0, map_width)
-            plt.ylim(0, map_width)
-            plt.xlabel("x [m]")
-            plt.ylabel("y [m]")
-            plt.title("Task-Agent allocation")
+            # Pick characters-per-line empirically.
+            # You can tune the scaling factor if needed.
+            max_chars = int(fig_width_px / 7)
+
+            wrapped = "\n".join(wrap(title_text, max_chars))
+            title.set_text(wrapped)
+            fig.canvas.draw_idle()
+
+        for i_round in range(n_rounds):
+
+            ax.clear()
+            ax.set_xlim(0, map_width)
+            ax.set_ylim(0, map_width)
+            # plt.xlabel("x [m]")
+            # plt.ylabel("y [m]")
+
+            title_text = f"Task-Agent allocation ({na} agents, {nt} tasks, {comm_text}round {i_round + 1}/{n_rounds})"
+            title = ax.set_title(title_text, wrap=True)
+
+            # Call once to set the initial wrapped title
+            wrap_title()
+
+            # Rewrap when figure is resized
+            fig.canvas.mpl_connect("resize_event", wrap_title)
 
             # plot agents
             for i in range(na):
                 c = colors[i]
-                plt.plot(pos_a_loop[i, 0], pos_a_loop[i, 1], marker='*',
-                         markersize=10,
-                         label='agents' if i == 0 else "", color=c)
+                ax.plot(pos_a_loop[i, 0], pos_a_loop[i, 1], marker='*',
+                        markersize=10,
+                        label='agents' if i == 0 else "", color=c)
 
             # plot tasks
-            plt.plot(pos_t[:, 0], pos_t[:, 1], 'rs', markersize=10,
-                     label='Targets', markerfacecolor=(1, 0.6, 0.6))
+            ax.plot(pos_t[:, 0], pos_t[:, 1], 'rs', markersize=10,
+                    label='Targets', markerfacecolor=(1, 0.6, 0.6))
 
             # if plot_range:
             # external function; kept as-is
@@ -455,9 +487,9 @@ def optimal_control_dta(
 
         U_tot_final = rt_completed - np.sum(J[-1, :])
         print("U_tot_final:", U_tot_final)
-        return dict(historical_path=historical_path)
 
     print("Simulation finished successfully.")
+    return dict(historical_path=historical_path)
 
 
 if __name__ == "__main__":
