@@ -25,11 +25,11 @@ Official paper link: https://doi.org/10.1016/j.ifacol.2021.11.249.
 
 2D map of the dynamic task allocation (10 agents and 10 tasks) with associated reward, cost, and utility
 
-With communication limitation:
+With limited communication:
 
 ![Alt Text](https://martinbraquet.com/wp-content/uploads/Dynamic-Task-Agent-Allocation.gif)
 
-Without communication limitation:
+With free communication:
 
 ![Alt Text](https://martinbraquet.com/wp-content/uploads/Dynamic-Task-Agent-Allocation-noLimit.gif)
 
