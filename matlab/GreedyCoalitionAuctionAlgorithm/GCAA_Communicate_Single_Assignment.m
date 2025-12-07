@@ -1,7 +1,8 @@
 
 % Runs consensus between neighbors
 % Checks for conflicts and resolves among agents
-
+% Algorithm 2 Share the bid vectors to agent i
+% Function ShareStateVectors
 %---------------------------------------------------------------------%
 
 function [GCAA_Data t] = GCAA_Communicate_Single_Assignment(GCAA_Params, GCAA_Data, Graph, old_t, T)

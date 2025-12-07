@@ -1,5 +1,6 @@
 
 % Main GCAA bundle building/updating (runs on each individual agent)
+% Algos 3 and 1 in paper
 %---------------------------------------------------------------------%
 
 function [GCAA_Data, newBid, agent] = GCAA_Bundle(GCAA_Params, GCAA_Data, agent, tasks, agent_idx)

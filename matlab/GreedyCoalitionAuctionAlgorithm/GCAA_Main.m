@@ -1,5 +1,6 @@
 
-% Main GCAA Function
+% Main Algorithm: Greedy Coalition Auction Algorithm
+% Algo 2, then 3, then 1 in the paper
 %---------------------------------------------------------------------%
 
 function [GCAA_Data Total_Score, All_scores, agents] = GCAA_Main(agents, tasks, Graph, prob_a_t, lambda)
@@ -44,12 +45,12 @@ doneFlag  = 0;
 while(doneFlag == 0)
     
     %---------------------------------------%
-    % 1. Communicate
+    % 1. Communicate (Algo 2)
     %---------------------------------------%
     [GCAA_Data, t] = GCAA_Communicate_Single_Assignment(GCAA_Params, GCAA_Data, Graph, t, T);
     
     %---------------------------------------%
-    % 2. Run GCAA bundle building/updating
+    % 2. Run GCAA bundle building/updating (Algos 3 and 1)
     %---------------------------------------%
     % Run GCAA on each agent 
     for n = 1:GCAA_Params.N

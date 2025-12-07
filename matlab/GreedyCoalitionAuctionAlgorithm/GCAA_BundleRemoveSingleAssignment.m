@@ -1,6 +1,8 @@
 
 % Update bundles after communication
 % For outbid agents, releases tasks from bundles
+% Algorithm 3 Update the bid vectors of agent i according to the winners/losers
+% Function UpdateStateVectors
 %---------------------------------------------------------------------%
 
 function GCAA_Data = GCAA_BundleRemoveSingleAssignment(GCAA_Params, GCAA_Data, agent_idx)

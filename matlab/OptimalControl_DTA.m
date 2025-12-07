@@ -236,7 +236,14 @@ for i_round = 1:n_rounds
         toc;
     else
         % Test of fixed solution
-        p_GCAA = {[1 4], [2 4], [3 4]}; S_GCAA = 1;
+        p_GCAA = {[1], [2], [3], [1], [2]}; S_GCAA = 1;
+        S_GCAA_ALL = [1, 1, 1, 1];
+        Agents.rin_task(i)
+        p_GCAA{i}(1)
+        pos_t(p_GCAA{i}(1),:)
+        for i = 1:na
+            Agents.rin_task(i,:) = pos_t(p_GCAA{i}(1),:)
+        end
     end
     
     if use_OPT

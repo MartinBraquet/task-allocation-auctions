@@ -1,5 +1,7 @@
 
 % Create bundles for each agent
+% Algorithm 1 Select the best task for agent i
+% Function SelectBestTask
 %---------------------------------------------------------------------%
 
 function [GCAA_Data, agent] = GCAA_BundleAdd(GCAA_Params, GCAA_Data, agent, tasks, agent_idx)
