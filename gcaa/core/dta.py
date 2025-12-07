@@ -40,7 +40,7 @@ def optimal_control_dta(
     nt=4,
     uniform_agents=False,
     uniform_tasks=True,
-    n_rounds=50,
+    n_rounds=20,
     limited_communication=True,
     use_GCAA=True,
     plot_range=False,
