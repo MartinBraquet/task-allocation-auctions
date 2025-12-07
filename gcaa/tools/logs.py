@@ -52,11 +52,7 @@ class logger:  # noqa
     section = 'main'
     ENABLED_SECTIONS = {
         'main': True,
-        'game': True,
-        'monte_carlo': True,
-        'alpha_beta': True,
-        'training': True,
-        'benchmark': True,
+        'gcaa': True,
     }
     history = []
 
@@ -189,21 +185,5 @@ class logger:  # noqa
         cls.info(f'... {msg} done')
 
 
-class game_logger(logger):  # noqa
-    section = 'game'
-
-
-class monte_carlo_logger(logger):  # noqa
-    section = 'monte_carlo'
-
-
-class alpha_beta_logger(logger):  # noqa
-    section = 'alpha_beta'
-
-
-class training_logger(logger):  # noqa
-    section = 'training'
-
-
-class benchmark_logger(logger):  # noqa
-    section = 'benchmark'
+class gcaa_logger(logger):  # noqa
+    section = 'gcaa'

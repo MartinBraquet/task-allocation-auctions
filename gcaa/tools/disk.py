@@ -58,15 +58,16 @@ def load_pickle(file_path: str | Path, raise_error=True):
         return None
 
 
-def dump_json(obj, file_path: str | Path):
+def dump_json(obj, file_path: str | Path, *args, **kwargs):
     """
     Dumps an object to a file using pickle.
     :param obj:
     :param file_path:
     :return:
     """
+    mkdir(Path(file_path).parent)
     with open(file_path, 'w') as f:
-        json.dump(obj, f)
+        json.dump(obj, f, *args, **kwargs)
 
 
 def load_json(file_path: str | Path, raise_error=True):

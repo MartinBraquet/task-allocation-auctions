@@ -3,8 +3,6 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
-import gcaa
-
 EPS = 1e-12
 
 
@@ -40,7 +38,9 @@ class DefaultParams:
                 setattr(cls, key, value)
 
 
-RESOURCE_PATH = Path(gcaa.__file__).parent / 'resources'
-DATA_PATH = Path(gcaa.__file__).parent / 'data'
+BASE_DIR = Path(__file__).parent.parent
+SIMU_DIR = BASE_DIR / "simulations"
+RESOURCE_PATH = BASE_DIR / 'resources'
+DATA_PATH = BASE_DIR / 'data'
 MAX_INT = sys.maxsize
 inf = float("inf")

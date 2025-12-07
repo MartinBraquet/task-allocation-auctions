@@ -28,12 +28,12 @@ def make_json_serializable(obj):
     """
     if isinstance(obj, (np.ndarray, list, tuple)):
         return [make_json_serializable(x) for x in obj]
+    elif isinstance(obj, (np.bool_, bool)):
+        return bool(obj)
     elif isinstance(obj, (np.integer, int)):
         return int(obj)
     elif isinstance(obj, (np.floating, float)):
         return float(obj)
-    elif isinstance(obj, (np.bool_, bool)):
-        return bool(obj)
     elif isinstance(obj, dict):
         return {make_json_serializable(k): make_json_serializable(v) for k, v in
                 obj.items()}

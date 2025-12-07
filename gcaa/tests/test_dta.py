@@ -17,6 +17,7 @@ class TestDTA(TestCase):
             uniform_agents=False,
             uniform_tasks=True,
             limited_communication=True,
+            plot_range=True,
         )
         print(results)
         expected = np.array(

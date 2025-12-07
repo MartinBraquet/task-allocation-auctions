@@ -7,11 +7,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from gcaa.algorithms.greedy import GCAASolution
-from gcaa.constants import SIMU_DIR
+from gcaa.tools.constants import SIMU_DIR
 from gcaa.core.control import ComputeCommandParamsWithVelocity, \
     OptimalControlSolution
 from gcaa.core.utility import CalcTaskUtility
 from gcaa.tools.basic import PrettyDict
+from gcaa.tools.disk import mkdir, dump_json
 from gcaa.tools.plotting import plotMapAllocation, PlotAgentRange
 from gcaa.tools.serialize import make_json_serializable
 
@@ -251,7 +252,7 @@ def optimal_control_dta(
     if sim_number is not None:
         sim_name += f"-{sim_number}"
     sim_json = make_json_serializable(sim_params)
-    json.dump(sim_json, open(SIMU_DIR / f"sim_{sim_name}.json", "w"), indent=2)
+    dump_json(sim_json, SIMU_DIR / f"sim_{sim_name}.json", indent=2)
 
     historical_path = np.zeros((n_rounds, na, 2))
 
