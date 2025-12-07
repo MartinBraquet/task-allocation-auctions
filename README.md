@@ -1,7 +1,7 @@
 [![Release](https://img.shields.io/pypi/v/gcaa?label=Release&style=flat-square)](https://pypi.org/project/gcaa/)
 [![CI](https://github.com/MartinBraquet/task-allocation-auctions/actions/workflows/ci.yml/badge.svg)](https://github.com/MartinBraquet/task-allocation-auctions/actions/workflows/ci.yml)
 [![CD](https://github.com/MartinBraquet/task-allocation-auctions/actions/workflows/cd.yml/badge.svg)](https://github.com/MartinBraquet/task-allocation-auctions/actions/workflows/cd.yml)
-[![Coverage](https://codecov.io/gh/MartinBraquet/task-allocation-auctions/branch/master/graph/badge.svg)](https://codecov.io/gh/MartinBraquet/task-allocation-auctions)
+[![Coverage](https://codecov.io/gh/MartinBraquet/task-allocation-auctions/graph/badge.svg?token=0YYZ2OSFZE)](https://codecov.io/gh/MartinBraquet/task-allocation-auctions)
 [![Downloads](https://static.pepy.tech/badge/gcaa)](https://pepy.tech/project/gcaa) 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 

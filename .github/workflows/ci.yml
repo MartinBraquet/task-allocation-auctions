@@ -37,7 +37,7 @@ jobs:
       - name: Check test coverage
         shell: bash -l {0}
         run: |
-          coverage report --rcfile=coverage.conf --fail-under=0
+          coverage report --rcfile=coverage.conf --fail-under=5
 
       - name: Upload coverage reports to Codecov
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.11'
