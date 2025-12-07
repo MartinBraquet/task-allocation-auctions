@@ -71,7 +71,7 @@ gcaa.optimal_control_dta(
     nt=4, # number of tasks
     na=5, # number of agents
     uniform_agents=False, # whether agents have an initial speed
-    n_rounds=100, # number of simulation rounds (precision vs compute time)
+    n_rounds=20, # number of simulation rounds (precision vs compute time)
     limited_communication=True, # whether communication is limited (True, False, or 'both')
 )
 ```

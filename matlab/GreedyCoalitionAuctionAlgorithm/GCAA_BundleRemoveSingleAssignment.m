@@ -24,4 +24,4 @@ end
             GCAA_Data.fixedAgents(idxMaxBid) = 1;
         end
     end
-end
+%end

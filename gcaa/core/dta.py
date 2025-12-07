@@ -1,3 +1,4 @@
+import json
 import time
 from dataclasses import dataclass
 from textwrap import wrap
@@ -5,10 +6,14 @@ from textwrap import wrap
 import matplotlib.pyplot as plt
 import numpy as np
 
+from gcaa.algorithms.greedy import GCAASolution
+from gcaa.constants import SIMU_DIR
 from gcaa.core.control import ComputeCommandParamsWithVelocity, \
     OptimalControlSolution
 from gcaa.core.utility import CalcTaskUtility
-from gcaa.tools.plotting import plotMapAllocation
+from gcaa.tools.basic import PrettyDict
+from gcaa.tools.plotting import plotMapAllocation, PlotAgentRange
+from gcaa.tools.serialize import make_json_serializable
 
 
 @dataclass
@@ -30,35 +35,6 @@ class Agents:
     kdrag: float
 
 
-@dataclass
-class SimuParams:
-    n_rounds: int
-    time_step: float
-    map_width: float
-    comm_distance: float
-    simu_time: float
-    colors: np.ndarray
-    pos_a_init: np.ndarray
-    max_speed: float
-    v_a: np.ndarray
-    pos_t: np.ndarray
-    max_speed_task: float
-    v_t: np.ndarray
-    radius_t: np.ndarray
-    task_type: np.ndarray
-    nt_loiter: int
-    na: int
-    nt: int
-    tf_t: np.ndarray
-    tloiter_t: np.ndarray
-    R: float
-    r_nom: float
-    r_bar: np.ndarray
-    lambda_: float
-    prob_a_t: np.ndarray
-    kdrag: float
-
-
 def remove_completed_tasks(pos_t: np.ndarray, ind):
     """
     pos_t: (nt, 2) array of task positions
@@ -66,7 +42,7 @@ def remove_completed_tasks(pos_t: np.ndarray, ind):
     """
 
     # Convert MATLAB's 1-based indices → Python 0-based
-    ind_set = {i - 1 for i in ind}
+    ind_set = {ind}
 
     # Keep only rows whose index is NOT in ind_set
     mask = [i not in ind_set for i in range(pos_t.shape[0])]
@@ -77,7 +53,7 @@ def remove_completed_tasks(pos_t: np.ndarray, ind):
 
 def update_path(p, pos_a, pos_t, time_step, agents, nt):
     """
-    p: list of lists of task indices (MATLAB 1-based)
+    p: list of lists of task indices (0-based)
     pos_a: (na, 2) agent positions
     pos_t: (nt, 2) task positions
     agents: object with Speed and Lt fields
@@ -91,8 +67,8 @@ def update_path(p, pos_a, pos_t, time_step, agents, nt):
         if len(p[i]) == 0:
             continue  # no remaining tasks for agent i
 
-        # Next task index (convert from MATLAB 1-based to Python 0-based)
-        task_idx = p[i][0] - 1
+        # Next task index (Python 0-based)
+        task_idx = p[i][0]
 
         d_a_t = pos_t[task_idx] - pos_a[i]
         dist = np.linalg.norm(d_a_t)
@@ -106,7 +82,7 @@ def update_path(p, pos_a, pos_t, time_step, agents, nt):
             nt -= 1
             agents.Lt[i] -= 1
 
-            # Record completed task (keep MATLAB style index)
+            # Record completed task
             ind_completed_tasks.append(p[i][0])
 
             # Remove completed task from path
@@ -121,16 +97,19 @@ def update_path(p, pos_a, pos_t, time_step, agents, nt):
 
 
 def optimal_control_dta(
-    use_GCAA=0,
-    uniform_agents=True,
-    uniform_tasks=True,
     na=5,
     nt=4,
-    n_rounds=20,
-    limited_communication='both',
-    plot_range=0,
-    simu_number=7,
-    simu_name="Dynamics",
+    uniform_agents=False,
+    uniform_tasks=True,
+    n_rounds=50,
+    limited_communication=True,
+    use_GCAA=True,
+    plot_range=False,
+    sim_number=None,
+    sim_name=None,
+    pos_a=None,
+    pos_t=None,
+    v_a=None,
 ):
     """
     Optimal Control Dynamic Task Assignment (DTA)
@@ -138,7 +117,7 @@ def optimal_control_dta(
     """
 
     Lt = 1
-    nt_loiter = int(np.ceil(0.5 * nt)) if use_GCAA else 0
+    nt_loiter = int(np.ceil(0.0 * nt)) if use_GCAA else 0
     task_type = np.zeros(nt, dtype=int)
     task_type[:nt_loiter] = 1
     lambda_ = 1
@@ -149,15 +128,22 @@ def optimal_control_dta(
     simu_time = 10
     time_step = simu_time / n_rounds
     time_start = 0
-    colors = np.random.rand(na, 3).tolist()
+    # colors = np.random.rand(na, 3).tolist()
+    colors = [[0.1981273990387259, 0.3366243554694487, 0.7846993301240909],
+              [0.8821034939507308, 0.2559728935596618, 0.09676506882534563],
+              [0.20577789946483516, 0.07305223660150595, 0.2492313739183929],
+              [0.12114448631888952, 0.641964480570594, 0.16585076770465268],
+              [0.5180110340887862, 0.9147867894409747, 0.8995141446644312]]
 
     # Random positions
-    pos_a = (0.1 + 0.8 * np.random.rand(na, 2)) * map_width
-    pos_t = (0.1 + 0.8 * np.random.rand(nt, 2)) * map_width
+    if pos_a is None:
+        pos_a = (0.1 + 0.8 * np.random.rand(na, 2)) * map_width
+    if pos_t is None:
+        pos_t = (0.1 + 0.8 * np.random.rand(nt, 2)) * map_width
 
     # Task finish and loiter times
     tf_t = simu_time * np.ones(nt)  # * (0.95 + 0.05 * np.random.rand(nt))
-    tloiter_t = simu_time * (0.2 + 0.05 * np.random.rand(nt))
+    tloiter_t = simu_time * (0.2 + 0.0 * np.random.rand(nt))
     tloiter_t[task_type == 0] = 0
 
     # Sort tasks by finishing time
@@ -171,10 +157,11 @@ def optimal_control_dta(
 
     # Agent velocities
     max_speed = 0.1
-    if uniform_agents:
-        v_a = np.zeros((na, 2))
-    else:
-        v_a = (2 * np.random.rand(na, 2) - 1) * max_speed
+    if v_a is None:
+        if uniform_agents:
+            v_a = np.zeros((na, 2))
+        else:
+            v_a = (2 * np.random.rand(na, 2) - 1) * max_speed
 
     # Task velocities
     max_speed_task = 0.1
@@ -200,10 +187,10 @@ def optimal_control_dta(
     r_bar[task_type == 1] = 5 * r_bar[task_type == 1]
 
     # Probability of agent completing task
-    if uniform_agents:
-        prob_a_t = 0.7 * np.ones((na, nt))
-    else:
-        prob_a_t = np.random.rand(na, nt)
+    # if uniform_agents:
+    prob_a_t = 0.7 * np.ones((na, nt))
+    # else:
+    #     prob_a_t = np.random.rand(na, nt)
 
     # ----------------------------
     # Create Task and Agent objects
@@ -229,18 +216,14 @@ def optimal_control_dta(
     # ----------------------------
     # Simulation parameters object
     # ----------------------------
-
-    # You had a variable “colors” in MATLAB but never defined it.
-    # You must define it externally before passing it here.
-
-    SimuParamsObj = SimuParams(
+    sim_params = PrettyDict(
         n_rounds=n_rounds,
         time_step=time_step,
         map_width=map_width,
         comm_distance=comm_distance,
         simu_time=simu_time,
         colors=colors,
-        pos_a_init=pos_a,
+        pos_a=pos_a,
         max_speed=max_speed,
         v_a=v_a,
         pos_t=pos_t,
@@ -258,8 +241,17 @@ def optimal_control_dta(
         r_bar=r_bar,
         lambda_=lambda_,
         prob_a_t=prob_a_t,
-        kdrag=kdrag
+        kdrag=kdrag,
+        use_GCAA=use_GCAA,
+        uniform_agents=uniform_agents,
+        uniform_tasks=uniform_tasks,
+        limited_communication=limited_communication,
     )
+    sim_name = sim_name or time.strftime("%Y%m%d-%H%M%S")
+    if sim_number is not None:
+        sim_name += f"-{sim_number}"
+    sim_json = make_json_serializable(sim_params)
+    json.dump(sim_json, open(SIMU_DIR / f"sim_{sim_name}.json", "w"), indent=2)
 
     historical_path = np.zeros((n_rounds, na, 2))
 
@@ -303,8 +295,7 @@ def optimal_control_dta(
         S_GCAA_ALL_full_simu = np.zeros((n_rounds, nt))
         rt_full_simu = np.zeros((n_rounds, nt))
 
-        J = np.zeros(
-            (n_rounds, na))  # MATLAB had n_rounds x na (indexing shifted)
+        J = np.zeros((n_rounds, na))
         J_to_completion_target = np.zeros((n_rounds, na))
 
         # cost/reward/utility arrays reused each round
@@ -337,7 +328,11 @@ def optimal_control_dta(
             # plt.xlabel("x [m]")
             # plt.ylabel("y [m]")
 
-            title_text = f"Task-Agent allocation ({na} agents, {nt} tasks, {comm_text}round {i_round + 1}/{n_rounds})"
+            title_text = (f"Task-Agent allocation ("
+                          f"{na} agents"
+                          f", {nt} tasks"
+                          f", {comm_text}round {i_round + 1}/{n_rounds}"
+                          f")")
             title = ax.set_title(title_text, wrap=True)
 
             # Call once to set the initial wrapped title
@@ -348,7 +343,7 @@ def optimal_control_dta(
 
             # plot agents
             for i in range(na):
-                c = colors[i]
+                c = colors[i % len(colors)]
                 ax.plot(pos_a_loop[i, 0], pos_a_loop[i, 1], marker='*',
                         markersize=10,
                         label='agents' if i == 0 else "", color=c)
@@ -357,9 +352,8 @@ def optimal_control_dta(
             ax.plot(pos_t[:, 0], pos_t[:, 1], 'rs', markersize=10,
                     label='Targets', markerfacecolor=(1, 0.6, 0.6))
 
-            # if plot_range:
-            # external function; kept as-is
-            # PlotAgentRange(pos_a_loop, comm_distance, colors, "Comm Range")
+            if plot_range:
+                PlotAgentRange(pos_a_loop, comm_distance, colors, "Comm Range")
 
             # external plotting for loitering
             # PlotTaskLoitering(pos_t, radius_t, Tasks.task_type, 'r--',
@@ -378,11 +372,10 @@ def optimal_control_dta(
             tasks.tloiter = tloiter_t
             tasks.radius = radius_t
 
-            # Compute costs / rewards / utilities for each agent-task pair (active tasks)
+            # Compute utilities for each agent-task pair (active tasks)
             for j in range(nt):
                 if tf_t_loop[j] > 0:
                     for i in range(na):
-                        # Keep parameter order identical to MATLAB call; pass None for the '[]' arg
                         _, _, _, _, costs[
                             i, j] = ComputeCommandParamsWithVelocity(
                             pos_a_loop[i, :].reshape(2, 1),
@@ -417,10 +410,17 @@ def optimal_control_dta(
             if use_GCAA:
                 t0 = time.perf_counter()
                 S_GCAA, p_GCAA, S_GCAA_ALL, rt_curr, agents = GCAASolution(
-                    agents, G, tasks)
+                    agents, G, tasks, map_width)
                 rt_full_simu[i_round, :] = rt_curr
                 t1 = time.perf_counter()
-                print(f"GCAASolution round {i_round + 1} took {t1 - t0:.2f}s")
+                alloc_cleaned = '\n'.join(
+                    [f'Agent {i} -> Task {p[0]}' for i, p in enumerate(p_GCAA)]
+                )
+                print(
+                    f"GCAA round {i_round + 1} ({t1 - t0:.2f}s)\n"
+                    f"{alloc_cleaned}\n"
+                    f"--------------------"
+                )
             else:
                 # test fixed task allocation
                 p_GCAA = [[0], [1], [3], [1], [2]][:na]
@@ -447,7 +447,8 @@ def optimal_control_dta(
             S_GCAA_ALL_full_simu[i_round, :] = S_GCAA_ALL
 
             # MATLAB did J(i_round+1,:) = J(i_round,:) + J_curr
-            # We emulate that shift: J row i_round accumulates previous J row (if i_round>0)
+            # We emulate that shift:
+            # J row i_round accumulates previous J row (if i_round>0)
             if i_round == 0:
                 J[i_round, :] = J_curr
             else:
@@ -458,22 +459,24 @@ def optimal_control_dta(
 
             # accumulate completed tasks reward-time if any
             for j in completed_tasks_round:
-                # j are MATLAB-style 1-based indices in the returned list (kept from earlier functions)
-                j0 = j - 1
-                rt_completed += rt_curr[j0]
+                rt_completed += rt_curr[j]
 
             # reset for next round (as in MATLAB)
             completed_tasks_round = []
 
             # unique legend and draw
-            plt.legend()
+            SKIP_LABELS = {"GCAA solution", "Comm Range"}
+            handles, labels = ax.get_legend_handles_labels()
+            filtered_handles = [h for h, l in zip(handles, labels) if
+                                l not in SKIP_LABELS]
+            filtered_labels = [l for l in labels if l not in SKIP_LABELS]
+            ax.legend(filtered_handles, filtered_labels)
             plt.draw()
             plt.pause(0.001)
 
             # Update agent positions and velocities from X:
             # MATLAB used: pos_a_loop = X(1:2,:,2)'; v_a_loop = X(3:4,:,2)';
-            # Assuming X is a numpy array shaped (4, na, n_horizon) and MATLAB-like indexing:
-            # take timestep index 1 (MATLAB 2) -> Python index 1
+            # Assuming X is a numpy array shaped (4, na, n_horizon)
             pos_a_loop = X[0:2, :, 1].T.copy()
             v_a_loop = X[2:4, :, 1].T.copy()
 

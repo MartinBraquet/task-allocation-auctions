@@ -4,4 +4,4 @@
 
 ### Indexing
 
-To ensure reproducibility with the matlab code, some variables representing indices (`winners`, etc.) start from 1.
+One of the few differences with the code in Matlab is that Python uses 0-based indexing. So, all tasks IDs, etc. are shifted by 1 (each index is one less than in Matlab).

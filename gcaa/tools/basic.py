@@ -6,6 +6,15 @@ class PrettyDict(dict):
     def __repr__(self):
         return ', '.join([f"{k}={v:.1f}" for k, v in self.items()])
 
+    def __getattr__(self, item):
+        return self[item]
+
+    def __setattr__(self, key, value):
+        self[key] = value
+
+    def copy(self):
+        return PrettyDict(self)
+
 
 def dict_factory():
     return defaultdict(dict_factory)
