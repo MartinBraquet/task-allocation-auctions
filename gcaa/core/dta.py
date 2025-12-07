@@ -119,26 +119,24 @@ def update_path(p, pos_a, pos_t, time_step, agents, nt):
     return p, pos_a, ind_completed_tasks, nt, agents
 
 
-def optimal_control_dta():
+def optimal_control_dta(
+    simu_number=7,
+    simu_name="Dynamics",
+    use_GCAA=0,
+    uniform_agents=1,
+    uniform_tasks=1,
+    plot_range=0,
+    na=5,
+    nt=4,
+    n_rounds=50,
+):
     """
     Optimal Control Dynamic Task Assignment (DTA)
     MATLAB equivalent: optimal_control_DTA.m
     """
 
-    simu_number = 7
-    simu_name = "Dynamics"
-
-    use_GCAA = 0
-    uniform_agents = 1
-    uniform_tasks = 1
-    plot_range = 0
-
-    na = 5
-    nt = 4
-    n_rounds = 50
-
     Lt = 1
-    nt_loiter = int(np.ceil(0.5 * nt))
+    nt_loiter = int(np.ceil(0.5 * nt)) if use_GCAA else 0
     task_type = np.zeros(nt, dtype=int)
     task_type[:nt_loiter] = 1
     lambda_ = 1
@@ -156,7 +154,7 @@ def optimal_control_dta():
     pos_t = (0.1 + 0.8 * np.random.rand(nt, 2)) * map_width
 
     # Task finish and loiter times
-    tf_t = simu_time * np.ones(nt) # * (0.95 + 0.05 * np.random.rand(nt))
+    tf_t = simu_time * np.ones(nt)  # * (0.95 + 0.05 * np.random.rand(nt))
     tloiter_t = simu_time * (0.2 + 0.05 * np.random.rand(nt))
     tloiter_t[task_type == 0] = 0
 
@@ -326,8 +324,8 @@ def optimal_control_dta():
                      label='Targets', markerfacecolor=(1, 0.6, 0.6))
 
             # if plot_range:
-                # external function; kept as-is
-                # PlotAgentRange(pos_a_loop, comm_distance, colors, "Comm Range")
+            # external function; kept as-is
+            # PlotAgentRange(pos_a_loop, comm_distance, colors, "Comm Range")
 
             # external plotting for loitering
             # PlotTaskLoitering(pos_t, radius_t, Tasks.task_type, 'r--',
@@ -351,7 +349,8 @@ def optimal_control_dta():
                 if tf_t_loop[j] > 0:
                     for i in range(na):
                         # Keep parameter order identical to MATLAB call; pass None for the '[]' arg
-                        _, _, _, _, costs[i, j] = ComputeCommandParamsWithVelocity(
+                        _, _, _, _, costs[
+                            i, j] = ComputeCommandParamsWithVelocity(
                             pos_a_loop[i, :].reshape(2, 1),
                             v_a_loop[i, :].reshape(2, 1),
                             pos_t[j, :].reshape(2, 1),
@@ -387,7 +386,7 @@ def optimal_control_dta():
                     agents, G, tasks)
                 rt_full_simu[i_round, :] = rt_curr
                 t1 = time.perf_counter()
-                print(f"GCAASolution round {i_round+1} took {t1-t0:.2f}s")
+                print(f"GCAASolution round {i_round + 1} took {t1 - t0:.2f}s")
             else:
                 # test fixed task allocation
                 p_GCAA = [[0], [1], [3], [1], [2]][:na]
