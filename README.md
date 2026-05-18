@@ -27,11 +27,11 @@ Official paper link: https://doi.org/10.1016/j.ifacol.2021.11.249.
 
 With limited communication:
 
-![Alt Text](https://martinbraquet.com/wp-content/uploads/Dynamic-Task-Agent-Allocation.gif)
+![Alt Text](https://raw.githubusercontent.com/MartinBraquet/assets/refs/heads/main/Dynamic-Task-Agent-Allocation.gif)
 
 With free communication:
 
-![Alt Text](https://martinbraquet.com/wp-content/uploads/Dynamic-Task-Agent-Allocation-noLimit.gif)
+![Alt Text](https://raw.githubusercontent.com/MartinBraquet/assets/refs/heads/main/Dynamic-Task-Agent-Allocation-noLimit.gif)
 
 ## Matlab
 
